@@ -1,0 +1,8 @@
+node_modules
+.git
+frontend
+*.md
+*.tex
+*.pdf
+docker-compose.yml
+.env*
