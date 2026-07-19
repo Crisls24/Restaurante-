@@ -18,21 +18,25 @@ import { NotificationsModule } from './notifications/notifications.module';
         console.log('[DB] Available env vars:', dbVars.join(', ') || 'NONE FOUND');
 
         const url = config.get<string>('DATABASE_URL')
+          || config.get<string>('MYSQL_PUBLIC_URL')
           || config.get<string>('MYSQL_URL')
           || config.get<string>('MYSQL_PRIVATE_URL');
 
         console.log('[DB] DATABASE_URL:', config.get<string>('DATABASE_URL') ? 'SET' : 'NOT SET');
+        console.log('[DB] MYSQL_PUBLIC_URL:', config.get<string>('MYSQL_PUBLIC_URL') ? 'SET' : 'NOT SET');
         console.log('[DB] MYSQL_URL:', config.get<string>('MYSQL_URL') ? 'SET' : 'NOT SET');
         console.log('[DB] MYSQL_PRIVATE_URL:', config.get<string>('MYSQL_PRIVATE_URL') ? 'SET' : 'NOT SET');
 
         if (url) {
           const masked = url.replace(/:([^@]+)@/, ':***@');
           console.log('[DB] Using URL connection:', masked);
+          const isPublic = url.includes('proxy.rlwy.net') || url.includes('MYSQL_PUBLIC_URL');
           return {
             type: 'mysql',
             url,
             autoLoadEntities: true,
             synchronize: true,
+            ssl: isPublic ? { rejectUnauthorized: false } : undefined,
           };
         }
 
