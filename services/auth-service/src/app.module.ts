@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -11,24 +12,23 @@ import { NotificationsModule } from './notifications/notifications.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const url = config.get('DATABASE_URL') || config.get('MYSQL_URL') || config.get('MYSQL_PRIVATE_URL');
+      useFactory: (config: ConfigService): TypeOrmModuleOptions => {
+        const url = config.get<string>('DATABASE_URL') || config.get<string>('MYSQL_URL') || config.get<string>('MYSQL_PRIVATE_URL');
         if (url) {
           return {
-            type: 'mysql' as const,
+            type: 'mysql',
             url,
             autoLoadEntities: true,
             synchronize: true,
-            ssl: { rejectUnauthorized: false },
           };
         }
         return {
-          type: 'mysql' as const,
-          host: config.get('MYSQLHOST') || config.get('MYSQL_HOST', 'localhost'),
-          port: Number(config.get('MYSQLPORT') || config.get('MYSQL_PORT', 3306)),
-          username: config.get('MYSQLUSER') || config.get('MYSQL_USER', 'resadmin'),
-          password: config.get('MYSQLPASSWORD') || config.get('MYSQL_PASSWORD', 'reservaciones_pass'),
-          database: config.get('MYSQLDATABASE') || config.get('MYSQL_DATABASE', 'reservaciones_db'),
+          type: 'mysql',
+          host: config.get<string>('MYSQLHOST') || config.get<string>('MYSQL_HOST', 'localhost'),
+          port: parseInt(config.get<string>('MYSQLPORT') || config.get<string>('MYSQL_PORT', '3306'), 10),
+          username: config.get<string>('MYSQLUSER') || config.get<string>('MYSQL_USER', 'resadmin'),
+          password: config.get<string>('MYSQLPASSWORD') || config.get<string>('MYSQL_PASSWORD', 'reservaciones_pass'),
+          database: config.get<string>('MYSQLDATABASE') || config.get<string>('MYSQL_DATABASE', 'reservaciones_db'),
           autoLoadEntities: true,
           synchronize: true,
         };
