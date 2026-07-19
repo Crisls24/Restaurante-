@@ -5,6 +5,17 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationsModule } from './notifications/notifications.module';
 
+function parseMySQLUrl(url: string) {
+  const parsed = new URL(url);
+  return {
+    host: parsed.hostname,
+    port: parseInt(parsed.port || '3306', 10),
+    username: parsed.username,
+    password: parsed.password,
+    database: parsed.pathname.replace(/^\//, ''),
+  };
+}
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -12,46 +23,43 @@ import { NotificationsModule } from './notifications/notifications.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService): TypeOrmModuleOptions => {
-        const dbVars = Object.keys(process.env).filter(k =>
-          k.includes('MYSQL') || k.includes('DATABASE') || k.includes('DB')
-        );
-        console.log('[DB] Available env vars:', dbVars.join(', ') || 'NONE FOUND');
-
-        const url = config.get<string>('DATABASE_URL')
+        const dbUrl = config.get<string>('DATABASE_URL')
           || config.get<string>('MYSQL_PUBLIC_URL')
           || config.get<string>('MYSQL_URL')
           || config.get<string>('MYSQL_PRIVATE_URL');
 
-        console.log('[DB] DATABASE_URL:', config.get<string>('DATABASE_URL') ? 'SET' : 'NOT SET');
-        console.log('[DB] MYSQL_PUBLIC_URL:', config.get<string>('MYSQL_PUBLIC_URL') ? 'SET' : 'NOT SET');
-        console.log('[DB] MYSQL_URL:', config.get<string>('MYSQL_URL') ? 'SET' : 'NOT SET');
-        console.log('[DB] MYSQL_PRIVATE_URL:', config.get<string>('MYSQL_PRIVATE_URL') ? 'SET' : 'NOT SET');
-
-        if (url) {
-          const masked = url.replace(/:([^@]+)@/, ':***@');
-          console.log('[DB] Using URL connection:', masked);
-          const isPublic = url.includes('proxy.rlwy.net') || url.includes('MYSQL_PUBLIC_URL');
-          return {
-            type: 'mysql',
-            url,
-            autoLoadEntities: true,
-            synchronize: true,
-            ssl: isPublic ? { rejectUnauthorized: false } : undefined,
-          };
+        if (dbUrl) {
+          try {
+            const parsed = parseMySQLUrl(dbUrl);
+            console.log('[DB] Parsed URL -> host:', parsed.host, 'port:', parsed.port, 'db:', parsed.database);
+            return {
+              type: 'mysql',
+              host: parsed.host,
+              port: parsed.port,
+              username: parsed.username,
+              password: parsed.password,
+              database: parsed.database,
+              autoLoadEntities: true,
+              synchronize: true,
+              ssl: { rejectUnauthorized: false },
+            };
+          } catch (e) {
+            console.log('[DB] URL parse failed, falling back to host/port:', e);
+          }
         }
 
-        const host = config.get<string>('MYSQLHOST') || config.get<string>('MYSQL_HOST', 'localhost');
-        console.log('[DB] Using host/port connection. Host:', host);
-
+        const host = config.get<string>('MYSQLHOST') || 'localhost';
+        console.log('[DB] Fallback -> host:', host);
         return {
           type: 'mysql',
           host,
-          port: parseInt(config.get<string>('MYSQLPORT') || config.get<string>('MYSQL_PORT', '3306'), 10),
-          username: config.get<string>('MYSQLUSER') || config.get<string>('MYSQL_USER', 'resadmin'),
-          password: config.get<string>('MYSQLPASSWORD') || config.get<string>('MYSQL_PASSWORD', 'reservaciones_pass'),
-          database: config.get<string>('MYSQLDATABASE') || config.get<string>('MYSQL_DATABASE', 'reservaciones_db'),
+          port: parseInt(config.get<string>('MYSQLPORT') || '3306', 10),
+          username: config.get<string>('MYSQLUSER') || 'resadmin',
+          password: config.get<string>('MYSQLPASSWORD') || 'reservaciones_pass',
+          database: config.get<string>('MYSQLDATABASE') || 'reservaciones_db',
           autoLoadEntities: true,
           synchronize: true,
+          ssl: host !== 'localhost' ? { rejectUnauthorized: false } : undefined,
         };
       },
     }),
