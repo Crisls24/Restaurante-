@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS restaurante_reservaciones;
-USE restaurante_reservaciones;
+CREATE DATABASE IF NOT EXISTS reservaciones_db;
+USE reservaciones_db;
 
 CREATE TABLE usuarios (
     id_usuario     INT PRIMARY KEY AUTO_INCREMENT,

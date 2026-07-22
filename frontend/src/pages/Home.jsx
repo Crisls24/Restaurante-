@@ -41,7 +41,7 @@ export default function Home() {
           <div className="tech-card">
             <strong>auth-service</strong>
             <span>NestJS (TypeScript)</span>
-            <small>Deploy: Railway</small>
+            <small>Deploy: Railway ✓</small>
           </div>
           <div className="tech-card">
             <strong>menu-service</strong>
