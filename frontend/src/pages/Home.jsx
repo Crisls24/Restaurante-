@@ -24,6 +24,7 @@ export default function Home() {
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.15}px)`, opacity: Math.max(0, 1 - scrollY / 600) }}>
+          <div className="gold-line"><span>◆</span></div>
           <p className="hero-label">Alta Cocina Mexicana</p>
           <h1 className="hero-title">Xiú</h1>
           <p className="hero-tagline">Sabores que cuentan historias</p>
@@ -45,12 +46,13 @@ export default function Home() {
             y las técnicas contemporáneas. Seleccionamos ingredientes de origen local
             para crear experiencias que despiertan los sentidos.
           </p>
+          <div className="gold-line" style={{ marginTop: '2rem' }}><span>◆</span></div>
           <p className="philosophy-author">— Chef Executive</p>
         </div>
       </section>
 
       {/* ── Menú Destacado ── */}
-      <section className="section">
+      <section className="section-rich section">
         <div className="section-center">
           <p className="section-label">Selección del Chef</p>
           <h2 className="section-title">Platillos Destacados</h2>
@@ -60,12 +62,15 @@ export default function Home() {
           {DISHES.map((dish, i) => (
             <div className="featured-item" key={i}>
               <div className="featured-img">
-                <span>✦</span>
+                <span style={{ fontSize: '1.8rem', opacity: 0.4 }}>✦</span>
               </div>
               <div className="featured-body">
                 <h3 className="featured-name">{dish.name}</h3>
                 <p className="featured-desc">{dish.desc}</p>
-                <span className="featured-price">${dish.price}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="featured-price">${dish.price}</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>{dish.category.toUpperCase()}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -76,8 +81,8 @@ export default function Home() {
       </section>
 
       {/* ── Galería ── */}
-      <section className="section-full" style={{ background: 'var(--bg)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <section className="section-full section-rich" style={{ background: 'transparent' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 3rem' }}>
           <div className="section-center">
             <p className="section-label">Ambiente</p>
             <h2 className="section-title">Nuestro Espacio</h2>
@@ -110,7 +115,7 @@ export default function Home() {
       </section>
 
       {/* ── Ubicación ── */}
-      <section className="section">
+      <section className="section-rich section">
         <div className="section-center">
           <p className="section-label">Visítanos</p>
           <h2 className="section-title">Encuéntranos</h2>

@@ -4,28 +4,30 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  --bg: #1A1A1A;
-  --bg-alt: #1E2B1F;
-  --bg-surface: #222220;
-  --bg-card: #252520;
+  --bg: #1A1816;
+  --bg-alt: #201C18;
+  --bg-surface: #242018;
+  --bg-card: #28241E;
+  --bg-elevated: #2E2A24;
   --accent: #C0543A;
   --accent-hover: #A8442E;
   --gold: #C9A96E;
   --gold-dim: #A08850;
-  --sage: #5B693F;
+  --gold-faint: rgba(201, 169, 110, 0.08);
   --text: #F5F0E8;
   --text-secondary: #A89B82;
   --text-muted: #7A7060;
   --border: #3A3530;
   --border-light: #4A4540;
-  --success: #5B8C5A;
-  --success-bg: #1E2B1F;
+  --success: #8BA668;
+  --success-bg: #222018;
   --error: #C0543A;
   --error-bg: #2A1A18;
   --radius: 4px;
   --radius-lg: 8px;
   --shadow: 0 2px 20px rgba(0,0,0,0.3);
   --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 60px rgba(201, 169, 110, 0.06);
   --font-serif: 'Cormorant Garamond', 'Georgia', serif;
   --font-sans: 'Inter', system-ui, sans-serif;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -42,6 +44,9 @@ body {
   line-height: 1.7;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(201, 169, 110, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(192, 84, 58, 0.02) 0%, transparent 50%);
 }
 
 .app { min-height: 100vh; display: flex; flex-direction: column; }
@@ -186,9 +191,27 @@ h1, h2, h3, h4 {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(30, 43, 31, 0.92) 0%, rgba(26, 26, 26, 0.88) 50%, rgba(26, 26, 26, 0.95) 100%),
-    linear-gradient(45deg, #1a2a1c 0%, #2a1c18 50%, #1a1a1a 100%);
+    radial-gradient(ellipse at 50% 40%, rgba(201, 169, 110, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 70%, rgba(192, 84, 58, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 30%, rgba(46, 42, 36, 0.8) 0%, transparent 60%),
+    linear-gradient(180deg, #1A1816 0%, #201C18 40%, #1A1816 100%);
   z-index: 0;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 100px, rgba(201, 169, 110, 0.015) 100px, rgba(201, 169, 110, 0.015) 101px),
+    repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(201, 169, 110, 0.015) 100px, rgba(201, 169, 110, 0.015) 101px);
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(26, 24, 22, 0.4) 100%);
 }
 
 .hero-content {
@@ -288,9 +311,39 @@ h1, h2, h3, h4 {
 
 /* ── About / Philosophy ── */
 .philosophy {
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(201, 169, 110, 0.04) 0%, transparent 60%),
+    var(--bg);
   text-align: center;
   padding: 8rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.philosophy::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  border: 1px solid rgba(201, 169, 110, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.philosophy::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  border: 1px solid rgba(201, 169, 110, 0.04);
+  border-radius: 50%;
+  pointer-events: none;
 }
 
 .philosophy-text {
@@ -322,7 +375,8 @@ h1, h2, h3, h4 {
 }
 
 .featured-item {
-  background: var(--bg-card);
+  background:
+    linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -337,13 +391,17 @@ h1, h2, h3, h4 {
 
 .featured-img {
   height: 200px;
-  background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg-surface) 100%);
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(192, 84, 58, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(201, 169, 110, 0.08) 0%, transparent 50%),
+    linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
   color: var(--text-muted);
   position: relative;
+  border-bottom: 1px solid var(--border);
 }
 
 .featured-img::after {
@@ -390,7 +448,9 @@ h1, h2, h3, h4 {
 
 .gallery-item {
   aspect-ratio: 1;
-  background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-alt) 100%);
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 110, 0.06) 0%, transparent 70%),
+    linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
   border-radius: var(--radius);
   display: flex;
   align-items: center;
@@ -402,6 +462,7 @@ h1, h2, h3, h4 {
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--border);
 }
 
 .gallery-item::before {
@@ -422,7 +483,12 @@ h1, h2, h3, h4 {
 
 /* ── Reservation Form ── */
 .reservation-section {
-  background: var(--bg-alt);
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(192, 84, 58, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 0%, rgba(201, 169, 110, 0.04) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .reservation-form {
@@ -468,7 +534,9 @@ h1, h2, h3, h4 {
 }
 
 .location-map {
-  background: var(--bg-surface);
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(201, 169, 110, 0.04) 0%, transparent 60%),
+    linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   display: flex;
@@ -479,6 +547,7 @@ h1, h2, h3, h4 {
   font-size: 0.85rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  box-shadow: var(--shadow-glow);
 }
 
 /* ── Container ── */
@@ -493,10 +562,12 @@ h1, h2, h3, h4 {
 
 /* ── Card ── */
 .card {
-  background: var(--bg-card);
+  background:
+    linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 2.5rem;
+  box-shadow: var(--shadow-glow);
 }
 
 /* ── Forms ── */
@@ -761,6 +832,81 @@ h1, h2, h3, h4 {
   font-size: 0.75rem;
   color: var(--text-muted);
   letter-spacing: 0.05em;
+}
+
+/* ── Decorative Patterns ── */
+.pattern-diamond {
+  position: relative;
+}
+
+.pattern-diamond::before {
+  content: '◆';
+  display: block;
+  text-align: center;
+  font-size: 0.5rem;
+  color: var(--gold-dim);
+  letter-spacing: 1.5em;
+  margin-bottom: 1rem;
+}
+
+.gold-line {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.gold-line::before,
+.gold-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.gold-line span {
+  font-size: 0.6rem;
+  color: var(--gold-dim);
+}
+
+/* Section with rich background */
+.section-rich {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(201, 169, 110, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(192, 84, 58, 0.03) 0%, transparent 50%),
+    var(--bg);
+  position: relative;
+}
+
+.section-rich::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+}
+
+/* Featured item hover glow */
+.featured-item::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(201, 169, 110, 0.1), transparent, rgba(192, 84, 58, 0.1));
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: -1;
+}
+
+.featured-item {
+  position: relative;
+}
+
+.featured-item:hover::before {
+  opacity: 1;
 }
 
 /* ── Responsive ── */
