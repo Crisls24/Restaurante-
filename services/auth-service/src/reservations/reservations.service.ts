@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Mesa } from './entities/mesa.entity';
 import { EstadoReservacion } from './entities/estado-reservacion.entity';
@@ -89,7 +89,7 @@ export class ReservationsService {
 
   async findAll() {
     return this.reservationsRepo.find({
-      relations: ['mesa', 'estado'],
+      relations: { mesa: true, estado: true },
       order: { fecha: 'DESC', hora_inicio: 'DESC' },
     });
   }
@@ -98,7 +98,7 @@ export class ReservationsService {
     const today = new Date().toISOString().split('T')[0];
     return this.reservationsRepo.find({
       where: { fecha: today },
-      relations: ['mesa', 'estado'],
+      relations: { mesa: true, estado: true },
       order: { hora_inicio: 'ASC' },
     });
   }
@@ -106,7 +106,7 @@ export class ReservationsService {
   async findOne(id: number) {
     const reservation = await this.reservationsRepo.findOne({
       where: { id_reservacion: id },
-      relations: ['mesa', 'estado'],
+      relations: { mesa: true, estado: true },
     });
     if (!reservation) throw new NotFoundException('Reservación no encontrada');
     return reservation;

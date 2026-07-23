@@ -13,6 +13,22 @@ function authHeaders() {
   };
 }
 
+async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+    return res;
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      throw new Error('El servicio está tardando en responder. Intenta de nuevo en unos segundos.');
+    }
+    throw err;
+  }
+}
+
 export async function register(data) {
   const res = await fetch(`${AUTH_API}/auth/register`, {
     method: 'POST',
@@ -44,7 +60,7 @@ export async function getProfile() {
 
 export async function getMenu(categoria = null) {
   const url = categoria ? `${MENU_API}/menu/?categoria=${categoria}` : `${MENU_API}/menu/`;
-  const res = await fetch(url);
+  const res = await fetchWithTimeout(url, {}, 45000);
   const json = await res.json();
   if (!res.ok) throw new Error('Error al cargar menu');
   return json;

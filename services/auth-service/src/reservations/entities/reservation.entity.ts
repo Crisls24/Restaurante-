@@ -6,7 +6,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../../users/user.entity';
 import { Mesa } from './mesa.entity';
 import { EstadoReservacion } from './estado-reservacion.entity';
 
