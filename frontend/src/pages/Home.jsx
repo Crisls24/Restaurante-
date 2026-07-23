@@ -2,11 +2,44 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 const DISHES = [
-  { name: 'Ceviche de Coliflor', desc: 'Leche de tigre, aguacate, chile de árbol', price: 185, category: 'Entradas' },
-  { name: 'Tuna Tostada', desc: 'Atún fresco, chipotle, aguacate, pepino', price: 195, category: 'Entradas' },
-  { name: 'Pato en Mole Negro', desc: 'Mole de Oaxaca, arroz rojo, plátano frito', price: 380, category: 'Platillos' },
-  { name: 'Barramundi al Pastor', desc: 'Piña asada, cilantro, salsa verde suave', price: 340, category: 'Platillos' },
-  { name: 'Costilla de Res Wagyu', desc: 'Salsa de tamarindo, puré de yuca, brócoli', price: 420, category: 'Platillos' },
+  {
+    name: 'Ceviche de Coliflor',
+    desc: 'Leche de tigre, aguacate, chile de árbol',
+    price: 185,
+    img: 'https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?w=600&q=80'
+  },
+  {
+    name: 'Tuna Tostada',
+    desc: 'Atún fresco, chipotle, aguacate, pepino',
+    price: 195,
+    img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&q=80'
+  },
+  {
+    name: 'Pato en Mole Negro',
+    desc: 'Mole de Oaxaca, arroz rojo, plátano frito',
+    price: 380,
+    img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80'
+  },
+  {
+    name: 'Barramundi al Pastor',
+    desc: 'Piña asada, cilantro, salsa verde suave',
+    price: 340,
+    img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80'
+  },
+  {
+    name: 'Costilla de Res Wagyu',
+    desc: 'Salsa de tamarindo, puré de yuca, brócoli',
+    price: 420,
+    img: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80'
+  },
+];
+
+const GALLERY = [
+  { label: 'Interior Principal', img: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80' },
+  { label: 'Barra de Coctelería', img: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=80' },
+  { label: 'Terraza', img: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&q=80' },
+  { label: 'Cocina Abierta', img: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80' },
+  { label: 'Salón Privado', img: 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80' },
 ];
 
 export default function Home() {
@@ -23,7 +56,7 @@ export default function Home() {
       {/* ── Hero ── */}
       <section className="hero">
         <div className="hero-bg" />
-        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.15}px)`, opacity: Math.max(0, 1 - scrollY / 600) }}>
+        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.12}px)`, opacity: Math.max(0, 1 - scrollY / 500) }}>
           <div className="gold-line"><span>◆</span></div>
           <p className="hero-label">Alta Cocina Mexicana</p>
           <h1 className="hero-title">Xiú</h1>
@@ -46,13 +79,13 @@ export default function Home() {
             y las técnicas contemporáneas. Seleccionamos ingredientes de origen local
             para crear experiencias que despiertan los sentidos.
           </p>
-          <div className="gold-line" style={{ marginTop: '2rem' }}><span>◆</span></div>
+          <div className="gold-line" style={{ marginTop: '2.5rem' }}><span>◆</span></div>
           <p className="philosophy-author">— Chef Executive</p>
         </div>
       </section>
 
       {/* ── Menú Destacado ── */}
-      <section className="section-rich section">
+      <section className="section">
         <div className="section-center">
           <p className="section-label">Selección del Chef</p>
           <h2 className="section-title">Platillos Destacados</h2>
@@ -61,39 +94,41 @@ export default function Home() {
         <div className="featured-grid">
           {DISHES.map((dish, i) => (
             <div className="featured-item" key={i}>
-              <div className="featured-img">
-                <span style={{ fontSize: '1.8rem', opacity: 0.4 }}>✦</span>
+              <div className="featured-img" style={{ backgroundImage: `url(${dish.img})` }}>
               </div>
               <div className="featured-body">
                 <h3 className="featured-name">{dish.name}</h3>
                 <p className="featured-desc">{dish.desc}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span className="featured-price">${dish.price}</span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>{dish.category.toUpperCase()}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+        <div style={{ textAlign: 'center', marginTop: '3.5rem' }}>
           <Link to="/menu" className="btn btn-outline">Ver Menú Completo</Link>
         </div>
       </section>
 
       {/* ── Galería ── */}
-      <section className="section-full section-rich" style={{ background: 'transparent' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 3rem' }}>
+      <section className="section-full" style={{ background: 'var(--bg-warm)', position: 'relative' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 3rem' }}>
           <div className="section-center">
             <p className="section-label">Ambiente</p>
             <h2 className="section-title">Nuestro Espacio</h2>
             <div className="divider-center" />
           </div>
           <div className="gallery-grid">
-            <div className="gallery-item wide">Interior Principal</div>
-            <div className="gallery-item">Barra de Coctelería</div>
-            <div className="gallery-item">Terraza</div>
-            <div className="gallery-item">Cocina Abierta</div>
-            <div className="gallery-item wide">Salón Privado</div>
+            {GALLERY.map((item, i) => (
+              <div
+                className={`gallery-item ${i === 0 || i === 4 ? 'wide' : ''}`}
+                key={i}
+                style={{ backgroundImage: `url(${item.img})` }}
+              >
+                <span>{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -103,9 +138,9 @@ export default function Home() {
         <div className="section" style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-center">
             <p className="section-label">Experiencia Personalizada</p>
-            <h2 className="section-title">Reserva Tu Mesa</h2>
+            <h2 className="section-title" style={{ color: '#fff' }}>Reserva Tu Mesa</h2>
             <div className="divider-center" />
-            <p className="section-subtitle" style={{ margin: '0 auto 2rem' }}>
+            <p className="section-subtitle" style={{ margin: '0 auto 2rem', color: 'rgba(255,255,255,0.6)' }}>
               Asegura tu lugar en una experiencia gastronómica inolvidable.
               Nuestro equipo preparará todo para tu visita.
             </p>
@@ -115,7 +150,7 @@ export default function Home() {
       </section>
 
       {/* ── Ubicación ── */}
-      <section className="section-rich section">
+      <section className="section" style={{ background: 'var(--bg)' }}>
         <div className="section-center">
           <p className="section-label">Visítanos</p>
           <h2 className="section-title">Encuéntranos</h2>
