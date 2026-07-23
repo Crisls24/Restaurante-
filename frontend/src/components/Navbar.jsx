@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 
 export default function Navbar() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
 
@@ -16,21 +16,27 @@ export default function Navbar() {
   const isHome = location.pathname === '/';
   const navClass = `navbar ${isHome && !scrolled ? 'transparent' : 'solid'}`;
 
+  const isEmployee = isAuthenticated && user?.rol !== 'cliente';
+
   return (
     <nav className={navClass}>
       <Link to="/" className="nav-brand">Xiú</Link>
       <div className="nav-links">
         <Link to="/" className="nav-link">Inicio</Link>
         <Link to="/menu" className="nav-link">Menú</Link>
-        {isAuthenticated ? (
+        {isEmployee ? (
           <>
-            <Link to="/profile" className="nav-link">Mi Cuenta</Link>
+            <Link to="/dashboard" className="nav-link">Panel</Link>
+            <button className="btn-logout" onClick={logout}>Salir</button>
+          </>
+        ) : isAuthenticated ? (
+          <>
             <button className="btn-logout" onClick={logout}>Salir</button>
           </>
         ) : (
           <>
-            <Link to="/login" className="nav-link">Iniciar Sesión</Link>
-            <Link to="/register" className="btn-nav">Reservar</Link>
+            <Link to="/login" className="nav-link">Staff</Link>
+            <Link to="/reservation" className="btn-nav">Reservar</Link>
           </>
         )}
       </div>

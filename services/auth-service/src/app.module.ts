@@ -4,6 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ReservationsModule } from './reservations/reservations.module';
 
 function parseMySQLUrl(url: string) {
   const parsed = new URL(url);
@@ -66,6 +67,7 @@ function parseMySQLUrl(url: string) {
     UsersModule,
     AuthModule,
     NotificationsModule,
+    ReservationsModule,
   ],
 })
 export class AppModule {}

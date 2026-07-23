@@ -62,8 +62,8 @@ export default function Home() {
           <h1 className="hero-title">Xiú</h1>
           <p className="hero-tagline">Sabores que cuentan historias</p>
           <div className="hero-actions">
-            <Link to="/menu" className="btn btn-primary">Explorar Menú</Link>
-            <Link to="/register" className="btn btn-outline">Reservar Mesa</Link>
+            <Link to="/reservation" className="btn btn-gold">Reservar Mesa</Link>
+            <Link to="/menu" className="btn btn-outline">Ver Menú</Link>
           </div>
         </div>
       </section>
@@ -133,7 +133,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Reservación ── */}
+      {/* ── Reservación CTA ── */}
       <section className="reservation-section">
         <div className="section" style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-center">
@@ -144,7 +144,7 @@ export default function Home() {
               Asegura tu lugar en una experiencia gastronómica inolvidable.
               Nuestro equipo preparará todo para tu visita.
             </p>
-            <Link to="/register" className="btn btn-gold">Crear Cuenta y Reservar</Link>
+            <Link to="/reservation" className="btn btn-gold">Reservar Ahora</Link>
           </div>
         </div>
       </section>

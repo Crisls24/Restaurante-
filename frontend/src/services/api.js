@@ -50,6 +50,52 @@ export async function getMenu(categoria = null) {
   return json;
 }
 
+export async function createReservation(data) {
+  const res = await fetch(`${AUTH_API}/reservations`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al crear reservación');
+  return json;
+}
+
+export async function getReservations() {
+  const res = await fetch(`${AUTH_API}/reservations`, { headers: authHeaders() });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al obtener reservaciones');
+  return json;
+}
+
+export async function getTodayReservations() {
+  const res = await fetch(`${AUTH_API}/reservations/today`, { headers: authHeaders() });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al obtener reservaciones de hoy');
+  return json;
+}
+
+export async function updateReservationStatus(id, estado) {
+  const res = await fetch(`${AUTH_API}/reservations/${id}/status`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ estado }),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al actualizar estado');
+  return json;
+}
+
+export async function cancelReservation(id) {
+  const res = await fetch(`${AUTH_API}/reservations/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al cancelar reservación');
+  return json;
+}
+
 export async function sendNotification(channel, to, message) {
   const res = await fetch(`${AUTH_API}/notifications/${channel}`, {
     method: 'POST',

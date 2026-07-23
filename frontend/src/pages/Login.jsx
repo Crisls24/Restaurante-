@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { login as apiLogin } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,7 +23,11 @@ export default function Login() {
     try {
       const result = await apiLogin(form);
       loginUser(result.access_token, result.usuario);
-      navigate('/profile');
+      if (result.usuario.rol === 'admin' || result.usuario.rol === 'mesero' || result.usuario.rol === 'cocina') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -34,8 +38,11 @@ export default function Login() {
   return (
     <div className="page-center">
       <div className="card form-card">
-        <h2>Bienvenido de Nuevo</h2>
-        <p className="subtitle">Inicia sesión para acceder a tu cuenta</p>
+        <p className="section-label" style={{ textAlign: 'center' }}>Panel de Empleados</p>
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 300, textAlign: 'center', marginBottom: '0.3rem' }}>
+          Iniciar Sesión
+        </h2>
+        <p className="subtitle">Acceso exclusivo para el equipo de Xiú</p>
 
         {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -53,12 +60,12 @@ export default function Login() {
           {error && <div className="alert alert-error">{error}</div>}
 
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
+            {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>
 
-        <p className="form-footer">
-          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+        <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          ¿Eres cliente? <a href="/reservation" style={{ color: 'var(--gold-bright)', textDecoration: 'none' }}>Reserva tu mesa aquí</a>
         </p>
       </div>
     </div>

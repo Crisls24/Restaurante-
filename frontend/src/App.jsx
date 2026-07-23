@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Register from './pages/Register';
 import Login from './pages/Login';
 import Menu from './pages/Menu';
-import Profile from './pages/Profile';
+import Reservation from './pages/Reservation';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   return (
@@ -15,10 +15,10 @@ export default function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/menu" element={<Menu />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/reservation" element={<Reservation />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
           <footer className="footer">
             <div className="footer-content">
