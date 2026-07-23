@@ -34,8 +34,8 @@ export default function Login() {
   return (
     <div className="page-center">
       <div className="card form-card">
-        <h2>Iniciar Sesion</h2>
-        <p className="subtitle">Accede a tu cuenta para reservar</p>
+        <h2>Bienvenido de Nuevo</h2>
+        <p className="subtitle">Inicia sesión para acceder a tu cuenta</p>
 
         {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -46,19 +46,19 @@ export default function Login() {
           </div>
 
           <div className="form-group">
-            <label>Contrasena</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Tu contrasena" required />
+            <label>Contraseña</label>
+            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Tu contraseña" required />
           </div>
 
           {error && <div className="alert alert-error">{error}</div>}
 
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Ingresando...' : 'Ingresar'}
+            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </form>
 
         <p className="form-footer">
-          No tienes cuenta? <Link to="/register">Registrate aqui</Link>
+          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
         </p>
       </div>
     </div>

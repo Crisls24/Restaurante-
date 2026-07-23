@@ -21,7 +21,33 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
           </Routes>
           <footer className="footer">
-            <p>Sistema de Reservaciones para Restaurante — Arquitectura Orientada a Servicios 2026</p>
+            <div className="footer-content">
+              <div>
+                <div className="footer-brand">Xiú</div>
+                <p className="footer-tagline">Alta Cocina Mexicana</p>
+              </div>
+              <div>
+                <h4>Horario</h4>
+                <p>
+                  Martes — Domingo<br />
+                  13:00 — 16:00 · 19:00 — 23:00<br />
+                  Cerrado los lunes
+                </p>
+              </div>
+              <div>
+                <h4>Contacto</h4>
+                <p>
+                  Av. Insurgentes Sur 1234<br />
+                  Col. Del Valle, CDMX<br />
+                  +52 55 1234 5678<br />
+                  <a href="mailto:reservaciones@xiu.mx">reservaciones@xiu.mx</a><br />
+                  <a href="https://instagram.com/xiu.mx" target="_blank" rel="noopener noreferrer">@xiu.mx</a>
+                </p>
+              </div>
+            </div>
+            <div className="footer-bottom">
+              &copy; 2026 Xiú — Arquitectura Orientada a Servicios
+            </div>
           </footer>
         </div>
       </AuthProvider>

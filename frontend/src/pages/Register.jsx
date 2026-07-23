@@ -18,7 +18,7 @@ export default function Register() {
     setError('');
 
     if (form.password !== confirmPassword) {
-      setError('Las contrasenas no coinciden');
+      setError('Las contraseñas no coinciden');
       return;
     }
 
@@ -27,7 +27,7 @@ export default function Register() {
       const data = { ...form };
       if (!data.telefono) delete data.telefono;
       await register(data);
-      navigate('/login', { state: { message: 'Registro exitoso! Ahora inicia sesion.' } });
+      navigate('/login', { state: { message: 'Registro exitoso. Inicia sesión para continuar.' } });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -39,7 +39,7 @@ export default function Register() {
     <div className="page-center">
       <div className="card form-card">
         <h2>Crear Cuenta</h2>
-        <p className="subtitle">HU-01 — Registrarme para hacer reservaciones</p>
+        <p className="subtitle">Únete a Xiú y reserva tu experiencia</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-row">
@@ -59,29 +59,29 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label>Telefono (opcional)</label>
-            <input type="tel" name="telefono" value={form.telefono} onChange={handleChange} placeholder="7712345678" />
+            <label>Teléfono (opcional)</label>
+            <input type="tel" name="telefono" value={form.telefono} onChange={handleChange} placeholder="771 234 5678" />
           </div>
 
           <div className="form-group">
-            <label>Contrasena</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Minimo 6 caracteres" minLength="6" required />
+            <label>Contraseña</label>
+            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Mínimo 6 caracteres" minLength="6" required />
           </div>
 
           <div className="form-group">
-            <label>Confirmar contrasena</label>
-            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repite tu contrasena" minLength="6" required />
+            <label>Confirmar contraseña</label>
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repite tu contraseña" minLength="6" required />
           </div>
 
           {error && <div className="alert alert-error">{error}</div>}
 
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Registrando...' : 'Registrarme'}
+            {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
           </button>
         </form>
 
         <p className="form-footer">
-          Ya tienes cuenta? <Link to="/login">Iniciar sesion</Link>
+          ¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link>
         </p>
       </div>
     </div>
