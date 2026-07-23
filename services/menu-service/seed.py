@@ -1,8 +1,9 @@
 """Seed script para popular MongoDB con datos de ejemplo."""
 import asyncio
+import os
 from motor.motor_asyncio import AsyncIOMotorClient
 
-MONGODB_URI = "mongodb://mongoadmin:mongopass@localhost:27017/reservaciones?authSource=admin"
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://mongoadmin:mongopass@localhost:27017/reservaciones?authSource=admin")
 MONGODB_DB = "reservaciones"
 
 MENU_ITEMS = [
