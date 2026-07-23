@@ -46,7 +46,7 @@ export default function Home() {
           <div className="tech-card">
             <strong>menu-service</strong>
             <span>FastAPI (Python)</span>
-            <small>Deploy: Render</small>
+            <small>Deploy: Render ✓</small>
           </div>
           <div className="tech-card">
             <strong>Base de Datos</strong>
@@ -56,7 +56,7 @@ export default function Home() {
           <div className="tech-card">
             <strong>Frontend</strong>
             <span>React (Vite)</span>
-            <small>Deploy: Vercel</small>
+            <small>Deploy: Vercel ✓</small>
           </div>
         </div>
       </section>
