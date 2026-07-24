@@ -1,0 +1,62 @@
+# Xiú — Frontend Rules (React + CSS custom)
+
+## Visual Identity
+- Restaurante de alta cocina mexicana contemporánea (inspiración: Pujol, Cosme, Sotero)
+- Paleta: #111110 (fondo), #D4654A (terracota), #C9A84C (dorado), #E8C882 (dorado brillante), #F5F0E8 (texto)
+- Tipografías: Cormorant Garamond (serif, títulos) + Inter (sans-serif, cuerpo)
+- Estilo: Elegante, cálido, vivo — contraste limpio, NO sucio ni apagado
+- Fotos reales de Unsplash (hero fullscreen, platillos, galería, reservación)
+
+## Animations & Micro-interactions
+- SIEMPRE usar clases .reveal, .reveal-left, .reveal-right, .reveal-scale para scroll animations
+- Usar hook `useScrollReveal()` en páginas con múltiples secciones
+- Hero: parallax con scroll (hero-bg se mueve más lento que el contenido)
+- Cards (featured-item): hover con translateY(-8px) + glow dorado + imagen scale(1.04)
+- Gallery: hover con scale(1.03) + sombra
+- Botones: hover con translateY(-2px) + box-shadow glow + ::before shimmer overlay
+- Nav links: underline animation con ::after width transition
+- Filtro menú activo: box-shadow glow dorado
+- Menu items: hover con padding-left shift + nombre cambia a gold
+- CSS transitions: var(--transition) = 0.35s cubic-bezier(0.4, 0, 0.2, 1)
+- CSS transitions fast: var(--transition-fast) = 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+## Component Rules
+- CSS custom en index.css — NO Tailwind, NO CSS modules, NO styled-components
+- Componentes funcionales + hooks (NO class components)
+- Navbar: "Reservar" CTA para clientes, "Panel" solo visible si autenticado
+- Home: Hero fullscreen con foto, secciones con scroll reveal (filosofía, platos, galería, CTA)
+- Menú: Lista elegante por categoría (NO grid de cards), fondo parallax, shimmer loading
+- Reservación: Formulario público SIN login (nombre, teléfono, fecha, hora, personas)
+- Dashboard: Vistas por rol (admin ve todo, mesero confirma/completa, cocina solo lee)
+- Login: Panel de empleados (NO "Iniciar sesión" genérico)
+- Loading states: usar div.shimmer con gradient animation para skeleton loading
+
+## Code Style
+- Naming: PascalCase para componentes, camelCase para funciones/variables
+- Archivos: un componente por archivo, nombre = nombre del componente
+- Imports orden: React → hooks → librerías → components → context → services → assets
+- Siempre manejar loading states + error states en fetchs
+- fetchWithTimeout para APIs con cold start (Render)
+- WhatsApp link en reservaciones: `https://wa.me/5255123456789?text=...`
+
+## Responsive
+- Mobile-first, breakpoints: 1024px, 768px, 480px
+- Navbar: links ocultos en mobile (<480px)
+- Home hero: 8rem desktop → 4.5rem tablet → 3.2rem mobile
+- Featured grid: 3 cols → 2 cols → 1 col
+- Gallery: 3 cols → 2 cols → 1 col, wide items pierden span en mobile
+- Tablas del dashboard: scroll horizontal en mobile
+
+## API & State
+- Variables de entorno: VITE_AUTH_API, VITE_MENU_API (prefix VITE_)
+- Auth context: token en localStorage, user en AuthContext
+- Roles: admin, mesero, cocina, cliente
+- Endpoints auth: /api/auth/*
+- Endpoints menú: /api/menu/*, /api/mesas/*
+- Endpoints reservaciones: /api/reservations/*
+
+## Safety
+- Nunca loguear tokens ni secrets en consola
+- Nunca hardcodear URLs de producción en código fuente
+- Validar inputs del usuario antes de enviar al backend
+- Sanitizar outputs para prevenir XSS

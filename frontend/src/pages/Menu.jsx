@@ -66,8 +66,12 @@ export default function Menu() {
 
       {loading ? (
         <div className="loading">
-          <p>{loadingMsg}</p>
-          <p style={{ fontSize: '0.75rem', marginTop: '0.5rem', color: 'var(--text-muted)' }}>Render free tier tarda ~30s en despertar</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <div className="shimmer" style={{ width: '200px', height: '16px' }} />
+            <div className="shimmer" style={{ width: '280px', height: '12px' }} />
+            <div className="shimmer" style={{ width: '160px', height: '12px' }} />
+            <p style={{ marginTop: '0.5rem' }}>{loadingMsg}</p>
+          </div>
         </div>
       ) : (
         <div className="menu-list">

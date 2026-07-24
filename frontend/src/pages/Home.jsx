@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
 const DISHES = [
   {
@@ -44,6 +45,7 @@ const GALLERY = [
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
+  const sectionRef = useScrollReveal();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -52,11 +54,20 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <div ref={sectionRef}>
       {/* ── Hero ── */}
       <section className="hero">
-        <div className="hero-bg" />
-        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.12}px)`, opacity: Math.max(0, 1 - scrollY / 500) }}>
+        <div
+          className="hero-bg"
+          style={{ transform: `translateY(${scrollY * 0.15}px) scale(1.1)` }}
+        />
+        <div
+          className="hero-content"
+          style={{
+            transform: `translateY(${scrollY * 0.1}px)`,
+            opacity: Math.max(0, 1 - scrollY / 600)
+          }}
+        >
           <div className="gold-line"><span>◆</span></div>
           <p className="hero-label">Alta Cocina Mexicana</p>
           <h1 className="hero-title">Xiú</h1>
@@ -71,31 +82,30 @@ export default function Home() {
       {/* ── Filosofía ── */}
       <section className="philosophy">
         <div className="section-center">
-          <p className="section-label">Nuestra Filosofía</p>
-          <h2 className="section-title">Tradición y Vanguardia</h2>
-          <div className="divider-center" />
-          <p className="philosophy-text">
-            En Xiú, cada platillo es un dialogue entre la cocina tradicional mexicana
+          <p className="section-label reveal">Nuestra Filosofía</p>
+          <h2 className="section-title reveal reveal-delay-1">Tradición y Vanguardia</h2>
+          <div className="divider-center reveal reveal-delay-2" />
+          <p className="philosophy-text reveal reveal-delay-3">
+            En Xiú, cada platillo es un diálogo entre la cocina tradicional mexicana
             y las técnicas contemporáneas. Seleccionamos ingredientes de origen local
             para crear experiencias que despiertan los sentidos.
           </p>
-          <div className="gold-line" style={{ marginTop: '2.5rem' }}><span>◆</span></div>
-          <p className="philosophy-author">— Chef Executive</p>
+          <div className="gold-line reveal reveal-delay-4" style={{ marginTop: '2.5rem' }}><span>◆</span></div>
+          <p className="philosophy-author reveal reveal-delay-5">— Chef Executive</p>
         </div>
       </section>
 
       {/* ── Menú Destacado ── */}
       <section className="section">
         <div className="section-center">
-          <p className="section-label">Selección del Chef</p>
-          <h2 className="section-title">Platillos Destacados</h2>
-          <div className="divider-center" />
+          <p className="section-label reveal">Selección del Chef</p>
+          <h2 className="section-title reveal reveal-delay-1">Platillos Destacados</h2>
+          <div className="divider-center reveal reveal-delay-2" />
         </div>
         <div className="featured-grid">
           {DISHES.map((dish, i) => (
-            <div className="featured-item" key={i}>
-              <div className="featured-img" style={{ backgroundImage: `url(${dish.img})` }}>
-              </div>
+            <div className={`featured-item reveal reveal-delay-${(i % 3) + 1}`} key={i}>
+              <div className="featured-img" style={{ backgroundImage: `url(${dish.img})` }} />
               <div className="featured-body">
                 <h3 className="featured-name">{dish.name}</h3>
                 <p className="featured-desc">{dish.desc}</p>
@@ -106,7 +116,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <div style={{ textAlign: 'center', marginTop: '3.5rem' }}>
+        <div style={{ textAlign: 'center', marginTop: '3.5rem' }} className="reveal">
           <Link to="/menu" className="btn btn-outline">Ver Menú Completo</Link>
         </div>
       </section>
@@ -115,14 +125,14 @@ export default function Home() {
       <section className="section-full" style={{ background: 'var(--bg-warm)', position: 'relative' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 3rem' }}>
           <div className="section-center">
-            <p className="section-label">Ambiente</p>
-            <h2 className="section-title">Nuestro Espacio</h2>
-            <div className="divider-center" />
+            <p className="section-label reveal">Ambiente</p>
+            <h2 className="section-title reveal reveal-delay-1">Nuestro Espacio</h2>
+            <div className="divider-center reveal reveal-delay-2" />
           </div>
           <div className="gallery-grid">
             {GALLERY.map((item, i) => (
               <div
-                className={`gallery-item ${i === 0 || i === 4 ? 'wide' : ''}`}
+                className={`gallery-item reveal-scale reveal-delay-${(i % 3) + 1} ${i === 0 || i === 4 ? 'wide' : ''}`}
                 key={i}
                 style={{ backgroundImage: `url(${item.img})` }}
               >
@@ -137,14 +147,16 @@ export default function Home() {
       <section className="reservation-section">
         <div className="section" style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-center">
-            <p className="section-label">Experiencia Personalizada</p>
-            <h2 className="section-title" style={{ color: '#fff' }}>Reserva Tu Mesa</h2>
-            <div className="divider-center" />
-            <p className="section-subtitle" style={{ margin: '0 auto 2rem', color: 'rgba(255,255,255,0.6)' }}>
+            <p className="section-label reveal">Experiencia Personalizada</p>
+            <h2 className="section-title reveal reveal-delay-1" style={{ color: '#fff' }}>Reserva Tu Mesa</h2>
+            <div className="divider-center reveal reveal-delay-2" />
+            <p className="section-subtitle reveal reveal-delay-3" style={{ margin: '0 auto 2rem', color: 'rgba(255,255,255,0.6)' }}>
               Asegura tu lugar en una experiencia gastronómica inolvidable.
               Nuestro equipo preparará todo para tu visita.
             </p>
-            <Link to="/reservation" className="btn btn-gold">Reservar Ahora</Link>
+            <div className="reveal reveal-delay-4">
+              <Link to="/reservation" className="btn btn-gold">Reservar Ahora</Link>
+            </div>
           </div>
         </div>
       </section>
@@ -152,12 +164,12 @@ export default function Home() {
       {/* ── Ubicación ── */}
       <section className="section" style={{ background: 'var(--bg)' }}>
         <div className="section-center">
-          <p className="section-label">Visítanos</p>
-          <h2 className="section-title">Encuéntranos</h2>
-          <div className="divider-center" />
+          <p className="section-label reveal">Visítanos</p>
+          <h2 className="section-title reveal reveal-delay-1">Encuéntranos</h2>
+          <div className="divider-center reveal reveal-delay-2" />
         </div>
         <div className="location-grid">
-          <div className="location-info">
+          <div className="location-info reveal-left">
             <div className="location-block">
               <h4>Dirección</h4>
               <p>Av. Insurgentes Sur 1234<br />Col. Del Valle, CDMX 03100</p>
@@ -178,9 +190,9 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="location-map">Mapa</div>
+          <div className="location-map reveal-right">Mapa</div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
