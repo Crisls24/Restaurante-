@@ -3,9 +3,15 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Menu from './pages/Menu';
 import Reservation from './pages/Reservation';
+import MyReservations from './pages/MyReservations';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import AdminMenu from './pages/AdminMenu';
+import TableBoard from './pages/TableBoard';
+import Reports from './pages/Reports';
 
 export default function App() {
   return (
@@ -14,11 +20,17 @@ export default function App() {
         <div className="app">
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/reservation" element={<Reservation />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/"                element={<Home />} />
+            <Route path="/login"           element={<Login />} />
+            <Route path="/register"        element={<Register />} />
+            <Route path="/menu"            element={<Menu />} />
+            <Route path="/reservation"     element={<Reservation />} />
+            <Route path="/my-reservations" element={<MyReservations />} />
+            <Route path="/dashboard"       element={<Dashboard />} />
+            <Route path="/profile"         element={<Profile />} />
+            <Route path="/admin/menu"      element={<AdminMenu />} />
+            <Route path="/tableboard"      element={<TableBoard />} />
+            <Route path="/reports"         element={<Reports />} />
           </Routes>
           <footer className="footer">
             <div className="footer-content">

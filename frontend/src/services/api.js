@@ -112,6 +112,17 @@ export async function cancelReservation(id) {
   return json;
 }
 
+export async function getUserReservations() {
+  const res = await fetch(`${AUTH_API}/reservations/my`, { headers: authHeaders() });
+  if (res.status === 404) {
+    // fallback: obtener todas y filtrar por token del usuario
+    return getReservations();
+  }
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Error al obtener tus reservaciones');
+  return json;
+}
+
 export async function sendNotification(channel, to, message) {
   const res = await fetch(`${AUTH_API}/notifications/${channel}`, {
     method: 'POST',
@@ -121,6 +132,42 @@ export async function sendNotification(channel, to, message) {
   const json = await res.json();
   if (!res.ok) throw new Error(json.message || 'Error al enviar notificacion');
   return json;
+}
+
+// ── Admin: CRUD Menú ──────────────────────────────────────────
+
+export async function createMenuItem(data) {
+  const res = await fetch(`${MENU_API}/menu/`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.detail || json.message || 'Error al crear platillo');
+  return json;
+}
+
+export async function updateMenuItem(id, data) {
+  const res = await fetch(`${MENU_API}/menu/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.detail || json.message || 'Error al actualizar platillo');
+  return json;
+}
+
+export async function deleteMenuItem(id) {
+  const res = await fetch(`${MENU_API}/menu/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json.detail || json.message || 'Error al eliminar platillo');
+  }
+  return true;
 }
 
 export { AUTH_API, MENU_API, getToken };
