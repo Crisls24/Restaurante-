@@ -1,4 +1,10 @@
-import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+  ForbiddenException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reservation } from './entities/reservation.entity';
@@ -21,7 +27,7 @@ export class ReservationsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async create(dto: CreateReservationDto) {
+  async create(dto: CreateReservationDto, userId?: number) {
     const disponible = await this.findAvailableTable(
       dto.fecha,
       dto.hora_inicio,
@@ -40,6 +46,7 @@ export class ReservationsService {
     });
 
     const reservation = this.reservationsRepo.create({
+      id_usuario: userId ?? null,
       id_mesa: disponible.id_mesa,
       id_estado: estadoPendiente?.id_estado || 1,
       fecha: dto.fecha,
@@ -53,7 +60,9 @@ export class ReservationsService {
     });
 
     const saved = await this.reservationsRepo.save(reservation);
-    this.logger.log(`Reservación creada: #${saved.id_reservacion} - Mesa ${disponible.numero}`);
+    this.logger.log(
+      `Reservación creada: #${saved.id_reservacion} - Mesa ${disponible.numero}`,
+    );
 
     try {
       const message = this.notificationsService.buildReservationConfirmation({
@@ -83,7 +92,8 @@ export class ReservationsService {
       hora_fin: saved.hora_fin,
       num_personas: saved.num_personas,
       estado: 'Pendiente',
-      mensaje: 'Reservación creada exitosamente. Recibirás confirmación por WhatsApp.',
+      mensaje:
+        'Reservación creada exitosamente. Recibirás confirmación por WhatsApp.',
     };
   }
 
@@ -100,6 +110,18 @@ export class ReservationsService {
       where: { fecha: today },
       relations: { mesa: true, estado: true },
       order: { hora_inicio: 'ASC' },
+    });
+  }
+
+  async findMine(userId: number, email?: string) {
+    const where: Array<{ id_usuario?: number; cliente_email?: string }> = [];
+    if (userId) where.push({ id_usuario: userId });
+    if (email) where.push({ cliente_email: email });
+    if (where.length === 0) return [];
+
+    return this.reservationsRepo.find({
+      where,
+      order: { fecha: 'DESC', hora_inicio: 'DESC' },
     });
   }
 
@@ -125,9 +147,22 @@ export class ReservationsService {
     return { message: `Reservación actualizada a "${estadoNombre}"` };
   }
 
-  async remove(id: number) {
+  async remove(id: number, user?: { sub: number; email: string; rol: string }) {
+    const reservation = await this.findOne(id);
+
+    const isOwner =
+      reservation.id_usuario === user?.sub ||
+      (!!user?.email && reservation.cliente_email === user.email);
+
+    if (user?.rol !== 'admin' && !isOwner) {
+      throw new ForbiddenException(
+        'No tienes permiso para cancelar esta reservación',
+      );
+    }
+
     const result = await this.reservationsRepo.delete(id);
-    if (result.affected === 0) throw new NotFoundException('Reservación no encontrada');
+    if (result.affected === 0)
+      throw new NotFoundException('Reservación no encontrada');
     return { message: 'Reservación cancelada exitosamente' };
   }
 

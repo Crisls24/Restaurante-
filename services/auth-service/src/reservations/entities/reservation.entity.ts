@@ -15,7 +15,7 @@ export class Reservation {
   id_reservacion: number;
 
   @Column({ nullable: true })
-  id_usuario: number;
+  id_usuario: number | null;
 
   @Column()
   id_mesa: number;

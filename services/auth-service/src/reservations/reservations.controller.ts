@@ -7,10 +7,16 @@ import {
   Body,
   Param,
   Query,
+  Request,
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -23,9 +29,11 @@ export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear reservación (público - sin auth)' })
-  create(@Body() dto: CreateReservationDto) {
-    return this.reservationsService.create(dto);
+  @ApiOperation({
+    summary: 'Crear reservación (público - vincula usuario si hay token)',
+  })
+  create(@Body() dto: CreateReservationDto, @Request() req) {
+    return this.reservationsService.create(dto, req.user?.sub);
   }
 
   @Get('available')
@@ -38,7 +46,11 @@ export class ReservationsController {
     @Query('hora') hora: string,
     @Query('personas') personas: string,
   ) {
-    return this.reservationsService.getAvailableTables(fecha, hora, parseInt(personas));
+    return this.reservationsService.getAvailableTables(
+      fecha,
+      hora,
+      parseInt(personas),
+    );
   }
 
   @Get('today')
@@ -48,6 +60,14 @@ export class ReservationsController {
   @ApiOperation({ summary: 'Reservaciones de hoy (empleados)' })
   findToday() {
     return this.reservationsService.findToday();
+  }
+
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Reservaciones del usuario autenticado' })
+  findMine(@Request() req) {
+    return this.reservationsService.findMine(req.user.sub, req.user.email);
   }
 
   @Get()
@@ -80,11 +100,10 @@ export class ReservationsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Cancelar reservación (solo admin)' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationsService.remove(id);
+  @ApiOperation({ summary: 'Cancelar reservación (admin o dueño)' })
+  remove(@Param('id', ParseIntPipe) id: number, @Request() req) {
+    return this.reservationsService.remove(id, req.user);
   }
 }
