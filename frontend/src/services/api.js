@@ -13,6 +13,23 @@ function authHeaders() {
   };
 }
 
+// Sesión expirada: si una petición con token devuelve 401, desloguea y redirige a login
+const _fetch = window.fetch.bind(window);
+window.fetch = async (...args) => {
+  const res = await _fetch(...args);
+  const [_, options] = args;
+  const headers = options?.headers || {};
+  const hasAuth = !!(headers.Authorization || headers.authorization);
+  if (res.status === 401 && hasAuth) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    if (!window.location.pathname.startsWith('/login')) {
+      window.location.href = '/login';
+    }
+  }
+  return res;
+};
+
 async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
