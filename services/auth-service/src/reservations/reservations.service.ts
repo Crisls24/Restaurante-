@@ -142,8 +142,8 @@ export class ReservationsService implements OnModuleInit {
     });
   }
 
-  async findToday() {
-    const today = new Date().toISOString().split('T')[0];
+  async findToday(fecha?: string) {
+    const today = fecha || new Date().toISOString().split('T')[0];
     return this.reservationsRepo.find({
       where: { fecha: today },
       relations: { mesa: true, estado: true },
@@ -179,8 +179,7 @@ export class ReservationsService implements OnModuleInit {
     });
     if (!estado) throw new NotFoundException('Estado no válido');
 
-    reservation.id_estado = estado.id_estado;
-    await this.reservationsRepo.save(reservation);
+    await this.reservationsRepo.update(id, { id_estado: estado.id_estado });
 
     return { message: `Reservación actualizada a "${estadoNombre}"` };
   }

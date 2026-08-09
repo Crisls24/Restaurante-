@@ -1594,6 +1594,12 @@ h1, h2, h3, h4 {
   width: 100%;
 }
 .btn-table-action:hover { filter: brightness(1.2); }
+.table-no-reservation {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.25rem 0;
+}
 
 /* ═══════════════════════════════════════════
    REPORTS (HU-10)

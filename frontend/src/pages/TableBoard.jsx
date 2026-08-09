@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getTodayReservations } from '../services/api';
+import { getTodayReservations, updateReservationStatus } from '../services/api';
 
 // 12 mesas fijas del restaurante Xiú
 const TOTAL_TABLES = 12;
@@ -17,8 +17,8 @@ function buildTables(todayReservations) {
     );
     return {
       numero: num,
-      ubicacion: location,
-      capacidad: num <= 4 ? 2 : num <= 8 ? 4 : 6,
+      ubicacion: res?.mesa?.ubicacion || location,
+      capacidad: res?.mesa?.capacidad || (num <= 4 ? 2 : num <= 8 ? 4 : 6),
       estado: res
         ? (r => r === 'Confirmada' || r === 'Pendiente' ? 'Reservada' : 'Ocupada')(res.estado?.nombre || res.estado)
         : 'Libre',
@@ -33,6 +33,13 @@ const TABLE_STYLES = {
   Ocupada:  { bg: '#2A1612', border: '#C0543A', text: '#D4654A', icon: '●' },
 };
 
+// Estado del tablero -> estado real de la reservación en BD
+const STATE_TO_RESERVATION = {
+  Reservada: 'Confirmada',
+  Ocupada:   'Completada',
+  Libre:     'Cancelada',
+};
+
 export default function TableBoard() {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
@@ -40,7 +47,7 @@ export default function TableBoard() {
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState('');
   const [selected, setSelected]       = useState(null);
-  const [overrides, setOverrides]     = useState({});
+  const [saving, setSaving]           = useState(null);
   const [lastUpdate, setLastUpdate]   = useState(new Date());
 
   useEffect(() => {
@@ -53,13 +60,9 @@ export default function TableBoard() {
     setLoading(true);
     setError('');
     try {
-      const res = await getTodayReservations();
-      const base = buildTables(Array.isArray(res) ? res : []);
-      // Apply manual overrides
-      const withOverrides = base.map((t) =>
-        overrides[t.numero] ? { ...t, estado: overrides[t.numero] } : t
-      );
-      setTables(withOverrides);
+      const fechaLocal = new Date().toLocaleDateString('sv-SE');
+      const res = await getTodayReservations(fechaLocal);
+      setTables(buildTables(Array.isArray(res) ? res : []));
       setLastUpdate(new Date());
     } catch {
       // If API fails, show empty tables
@@ -69,12 +72,22 @@ export default function TableBoard() {
     }
   }
 
-  function changeTableState(numero, newEstado) {
-    setOverrides((prev) => ({ ...prev, [numero]: newEstado }));
-    setTables((prev) =>
-      prev.map((t) => t.numero === numero ? { ...t, estado: newEstado } : t)
-    );
-    setSelected(null);
+  async function changeTableState(table, newEstado) {
+    const res = table.reservacion;
+    if (!res) return;
+
+    const estadoReal = STATE_TO_RESERVATION[newEstado];
+    setSaving({ numero: table.numero, estado: newEstado });
+    setError('');
+    try {
+      await updateReservationStatus(res.id_reservacion, estadoReal);
+      await load();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(null);
+      setSelected(null);
+    }
   }
 
   const counts = {
@@ -153,7 +166,7 @@ export default function TableBoard() {
                 )}
 
                 {/* Panel de acciones inline */}
-                {isSelected && (
+                {isSelected && table.reservacion && (
                   <div className="table-actions" onClick={(e) => e.stopPropagation()}>
                     {['Libre', 'Reservada', 'Ocupada']
                       .filter((s) => s !== table.estado)
@@ -162,11 +175,19 @@ export default function TableBoard() {
                           key={newState}
                           className="btn-table-action"
                           style={{ borderColor: TABLE_STYLES[newState].border, color: TABLE_STYLES[newState].text }}
-                          onClick={() => changeTableState(table.numero, newState)}
+                          onClick={() => changeTableState(table, newState)}
+                          disabled={saving?.numero === table.numero}
                         >
-                          → {newState}
+                          {saving?.numero === table.numero && saving.estado === newState
+                            ? 'Guardando…'
+                            : `→ ${newState}`}
                         </button>
                       ))}
+                  </div>
+                )}
+                {isSelected && !table.reservacion && (
+                  <div className="table-actions" onClick={(e) => e.stopPropagation()}>
+                    <span className="table-no-reservation">Sin reservación hoy — no hay cambios que guardar</span>
                   </div>
                 )}
               </div>
@@ -176,7 +197,7 @@ export default function TableBoard() {
       )}
 
       <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '2rem' }}>
-        Haz clic en una mesa para cambiar su estado manualmente
+        Haz clic en una mesa con reservación para cambiar su estado (se guarda en el sistema)
       </p>
     </main>
   );

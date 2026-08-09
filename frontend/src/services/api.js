@@ -84,8 +84,11 @@ export async function getReservations() {
   return json;
 }
 
-export async function getTodayReservations() {
-  const res = await fetch(`${AUTH_API}/reservations/today`, { headers: authHeaders() });
+export async function getTodayReservations(fecha) {
+  const url = fecha
+    ? `${AUTH_API}/reservations/today?fecha=${fecha}`
+    : `${AUTH_API}/reservations/today`;
+  const res = await fetch(url, { headers: authHeaders() });
   const json = await res.json();
   if (!res.ok) throw new Error(json.message || 'Error al obtener reservaciones de hoy');
   return json;

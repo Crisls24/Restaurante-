@@ -58,8 +58,9 @@ export class ReservationsController {
   @Roles('admin', 'mesero', 'cocina')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Reservaciones de hoy (empleados)' })
-  findToday() {
-    return this.reservationsService.findToday();
+  @ApiQuery({ name: 'fecha', required: false, example: '2026-08-08' })
+  findToday(@Query('fecha') fecha?: string) {
+    return this.reservationsService.findToday(fecha);
   }
 
   @Get('my')
