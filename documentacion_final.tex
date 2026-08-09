@@ -583,6 +583,73 @@ En el entorno de producción de Render (plan gratuito), el contenedor del micros
 3. Complete los datos de contacto, fecha, hora y número de personas.\newline
 4. Guarde el comprobante digital o presione \textbf{Enviar Confirmación por WhatsApp}.
 
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Demostración en Video: Programa Cliente Funcional}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{tcolorbox}[title=Criterio de Evaluación --- Punto 9: El programa cliente es funcional (15 pts)]
+Se demuestra mediante video que el \textbf{programa cliente} (Frontend SPA en React 18, desplegado en Vercel) es completamente funcional.
+El video explica el funcionamiento desde el punto de vista del usuario final y hace referencia al repositorio en \textbf{GitHub}.
+\end{tcolorbox}
+
+\subsection{¿Qué se demuestra en el video?}
+
+\begin{itemize}
+  \item Acceso al enlace de producción: \texttt{https://restaurante-frontend-omega.vercel.app/}
+  \item Navegación por la pantalla de inicio (\textbf{Menú visual} con platillos reales desde MongoDB).
+  \item Flujo completo de \textbf{reservación de mesa}: formulario, confirmación y comprobante.
+  \item Confirmación enviada por \textbf{WhatsApp} al número del cliente.
+  \item Visualización del \textbf{Menú Digital} consumido en tiempo real desde el Menu-Service (FastAPI).
+  \item Explicación de la arquitectura cliente--servidor y cómo el frontend consume las APIs REST.
+\end{itemize}
+
+\subsection{Evidencia de Despliegue Continuo (GitHub)}
+
+El código fuente del frontend está versionado y publicado en:
+\begin{center}
+  \texttt{https://github.com/Crisls24/Restaurante-}
+\end{center}
+Vercel realiza despliegue automático (\textbf{CI/CD}) en cada \textit{push} a la rama \texttt{main}, garantizando que el cliente en producción siempre refleja el código más reciente del repositorio.
+
+% ════════════════════════════════════════════════════════════════════════════
+\section{Demostración en Video: Programa Servidor Funcional}
+% ════════════════════════════════════════════════════════════════════════════
+
+\begin{tcolorbox}[title=Criterio de Evaluación --- Punto 10: El programa servidor es funcional (15 pts)]
+Se demuestra mediante video que el \textbf{programa servidor} (dos microservicios en la nube) es completamente funcional,
+explicando su arquitectura SOA, tecnologías y despliegue cloud.
+\end{tcolorbox}
+
+\subsection{¿Qué se demuestra en el video?}
+
+\begin{itemize}
+  \item \textbf{Auth-Service} (NestJS + MySQL en Railway): login de admin y mesero con retorno de \textbf{JWT}.
+  \item \textbf{Menu-Service} (FastAPI + MongoDB Atlas en Render): consulta de platillos en tiempo real desde la base de datos NoSQL.
+  \item Llamadas REST documentadas con \textbf{Swagger / OpenAPI} accesibles en \texttt{/api/docs}.
+  \item Protección de rutas con \textbf{Guards JWT} --- se muestra el rechazo \texttt{401 Unauthorized} ante tokens inválidos.
+  \item Flujo de reservación: \texttt{POST /reservations} → confirmación → \texttt{PUT /reservations/:id/status}.
+  \item Gestión de reportes del día: \texttt{GET /reservations/today} con listado de todas las mesas activas.
+\end{itemize}
+
+\subsection{Infraestructura de Despliegue del Servidor}
+
+\begin{center}\small
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Servicio} & \textbf{Tecnología} & \textbf{URL de Producción} \\
+\hline
+Auth-Service & NestJS + TypeORM + MySQL & \texttt{railway.app} \\
+Menu-Service & FastAPI + Motor + MongoDB & \texttt{onrender.com} \\
+Base de datos relacional & MySQL 8 (Railway Cloud) & Gestionada por Railway \\
+Base de datos NoSQL & MongoDB Atlas (AWS) & Cluster M0 gratuito \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+El servidor está versionado íntegramente en \textbf{GitHub} bajo la misma organización del proyecto, con ramas protegidas y historial de commits que evidencian el desarrollo iterativo por sprints Scrum.
+
 % ════════════════════════════════════════════════════════════════════════════
 \section{Conclusión}
 % ════════════════════════════════════════════════════════════════════════════
