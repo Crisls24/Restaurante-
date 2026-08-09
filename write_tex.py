@@ -807,6 +807,128 @@ Las figuras \ref{fig:cap_res1} y \ref{fig:cap_res2} presentan el flujo de agenda
 \label{fig:cap_res2}
 \end{figure}
 
+\section{Evidencia Fotográfica del Funcionamiento por Rol}
+
+En esta sección se integran las capturas de pantalla tomadas directamente sobre la aplicación desplegada en producción en Vercel, organizadas por el rol de interacción (Cliente, Administrador y Mesero).
+
+\subsection{Rol Cliente: Flujo de Reservación y Menú}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/cliente_inicio.png}
+\caption{Vista de Inicio del Cliente (Página Principal Xiú).}
+\label{fig:cliente_inicio}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/cliente_formulario.png}
+\caption{Formulario de Registro de Reservación.}
+\label{fig:cliente_formulario}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/cliente_comprobante.png}
+\caption{Comprobante Digital de Reservación Registrada.}
+\label{fig:cliente_comprobante}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{img/cliente_whatsapp.png}
+\caption{Integración y Envío de Confirmación vía WhatsApp.}
+\label{fig:cliente_whatsapp}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/cliente_menu.png}
+\caption{Consulta de la Carta / Menú de Platillos (MongoDB).}
+\label{fig:cliente_menu}
+\end{figure}
+
+\subsection{Rol Administrador: Gestión del Sistema y Reportes}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{img/admin_login.png}
+\caption{Inicio de Sesión con Credenciales de Administrador.}
+\label{fig:admin_login}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/admin_menu_publico.png}
+\caption{Menú de Navegación Administrador.}
+\label{fig:admin_menu_publico}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/admin_panel.png}
+\caption{Panel Principal (Dashboard) del Administrador.}
+\label{fig:admin_panel}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/admin_tableboard.png}
+\caption{Tablero Interactivo de Estado de Mesas (Admin).}
+\label{fig:admin_tableboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/admin_gestion_menu.png}
+\caption{Módulo de Gestión de Menú (CRUD NoSQL).}
+\label{fig:admin_gestion_menu}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/admin_reportes.png}
+\caption{Módulo de Reportes Estadísticos y Métricas.}
+\label{fig:admin_reportes}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{img/admin_perfil.png}
+\caption{Perfil de Usuario Administrador y Generación de WhatsApp.}
+\label{fig:admin_perfil}
+\end{figure}
+
+\subsection{Rol Mesero: Operación de Servicio y Estado de Mesas}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{img/mesero_login.png}
+\caption{Inicio de Sesión con Credenciales de Mesero.}
+\label{fig:mesero_login}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/mesero_panel.png}
+\caption{Panel de Control del Mesero.}
+\label{fig:mesero_panel}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{img/mesero_tableboard.png}
+\caption{Tablero de Mesas Ocupadas y Disponibles en Tiempo Real.}
+\label{fig:mesero_tableboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{img/mesero_perfil.png}
+\caption{Perfil del Usuario Mesero.}
+\label{fig:mesero_perfil}
+\end{figure}
+
 \subsection{Persistencia Relacional}
 Las figuras \ref{fig:cap_sql1} y \ref{fig:cap_sql2} comprueban las tablas creadas e información en la BD relacional.
 
