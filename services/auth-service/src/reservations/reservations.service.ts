@@ -66,6 +66,15 @@ export class ReservationsService implements OnModuleInit {
   }
 
   async create(dto: CreateReservationDto, userId?: number) {
+    const allTables = await this.mesasRepo.find({ where: { activa: true } });
+    const maxCapacity = Math.max(...allTables.map((t) => t.capacidad), 0);
+
+    if (dto.num_personas > maxCapacity) {
+      throw new BadRequestException(
+        `No hay mesas con capacidad para ${dto.num_personas} personas (máximo ${maxCapacity})`,
+      );
+    }
+
     const disponible = await this.findAvailableTable(
       dto.fecha,
       dto.hora_inicio,
@@ -237,28 +246,19 @@ export class ReservationsService implements OnModuleInit {
     });
 
     const compatible = allTables.filter((t) => t.capacidad >= numPersonas);
+    if (compatible.length === 0) return null;
 
-    for (const mesa of compatible) {
-      const conflict = await this.reservationsRepo.findOne({
-        where: {
-          id_mesa: mesa.id_mesa,
-          fecha,
-          id_estado: 1,
-        },
-      });
+    // Mesas ocupadas: reservas no canceladas cuyo horario se traslapa
+    const booked = await this.reservationsRepo
+      .createQueryBuilder('r')
+      .select('r.id_mesa')
+      .where('r.fecha = :fecha', { fecha })
+      .andWhere('r.hora_inicio < :horaFin', { horaFin })
+      .andWhere('r.hora_fin > :horaInicio', { horaInicio })
+      .andWhere('r.id_estado != 3')
+      .getMany();
 
-      if (!conflict) {
-        return mesa;
-      }
-
-      const existingEnd = conflict.hora_fin;
-      const existingStart = conflict.hora_inicio;
-
-      if (horaInicio >= existingEnd || horaFin <= existingStart) {
-        return mesa;
-      }
-    }
-
-    return null;
+    const bookedIds = booked.map((r) => r.id_mesa);
+    return compatible.find((t) => !bookedIds.includes(t.id_mesa)) || null;
   }
 }

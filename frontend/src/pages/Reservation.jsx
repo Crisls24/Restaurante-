@@ -10,7 +10,6 @@ export default function Reservation() {
     cliente_email: '',
     fecha: '',
     hora_inicio: '',
-    hora_fin: '',
     num_personas: 2,
     notas: '',
   });
@@ -29,12 +28,15 @@ export default function Reservation() {
     setLoading(true);
 
     try {
-      if (!form.hora_fin) {
-        const [h, m] = form.hora_inicio.split(':').map(Number);
-        const endH = h + 2;
-        form.hora_fin = `${String(endH).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-      }
-      const result = await createReservation(form);
+      const [h, m] = form.hora_inicio.split(':').map(Number);
+      let endH = h + 2;
+      let endM = m;
+      if (endH >= 24) { endH = 23; endM = 59; }
+      const data = {
+        ...form,
+        hora_fin: `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`,
+      };
+      const result = await createReservation(data);
       setSuccess(result);
       setForm({
         cliente_nombre: '',
@@ -42,7 +44,6 @@ export default function Reservation() {
         cliente_email: '',
         fecha: '',
         hora_inicio: '',
-        hora_fin: '',
         num_personas: 2,
         notas: '',
       });
@@ -117,33 +118,21 @@ export default function Reservation() {
             <div className="form-group">
               <label>Número de personas</label>
               <select name="num_personas" value={form.num_personas} onChange={handleChange}>
-                {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                {[1,2,3,4,5,6,7,8].map(n => (
                   <option key={n} value={n}>{n} {n === 1 ? 'persona' : 'personas'}</option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Hora de llegada</label>
-              <select name="hora_inicio" value={form.hora_inicio} onChange={handleChange} required>
-                <option value="">Seleccionar hora</option>
-                {['13:00','13:30','14:00','14:30','15:00','15:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00'].map(h => (
-                  <option key={h} value={h}>{h}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Duración</label>
-              <select name="hora_fin" value={form.hora_fin} onChange={handleChange}>
-                <option value="">2 horas (estándar)</option>
-                <option value="1.5">1.5 horas</option>
-                <option value="2">2 horas</option>
-                <option value="2.5">2.5 horas</option>
-                <option value="3">3 horas</option>
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Hora de llegada</label>
+            <select name="hora_inicio" value={form.hora_inicio} onChange={handleChange} required>
+              <option value="">Seleccionar hora</option>
+              {['13:00','13:30','14:00','14:30','15:00','15:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00'].map(h => (
+                <option key={h} value={h}>{h}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
