@@ -20,9 +20,11 @@ export default function Dashboard() {
 
   async function loadReservations() {
     setLoading(true);
+    setError('');
     try {
-      const data = filter === 'today' ? await getTodayReservations() : await getReservations();
-      setReservations(data);
+      const fechaLocal = new Date().toLocaleDateString('sv-SE');
+      const data = filter === 'today' ? await getTodayReservations(fechaLocal) : await getReservations();
+      setReservations(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -52,6 +54,25 @@ export default function Dashboard() {
   const rol = user?.rol;
   const canEdit = rol === 'admin' || rol === 'mesero';
   const canDelete = rol === 'admin';
+
+  const getEstado = (r) => r.estado?.nombre || 'Pendiente';
+  const stats = {
+    total:       reservations.length,
+    pendientes:  reservations.filter((r) => getEstado(r) === 'Pendiente').length,
+    confirmadas: reservations.filter((r) => getEstado(r) === 'Confirmada').length,
+    completadas: reservations.filter((r) => getEstado(r) === 'Completada').length,
+    canceladas:  reservations.filter((r) => getEstado(r) === 'Cancelada').length,
+    personas:    reservations.filter((r) => getEstado(r) !== 'Cancelada').reduce((a, r) => a + (r.num_personas || 0), 0),
+  };
+
+  const KPI_CARDS = [
+    { label: 'Reservaciones', value: stats.total, color: 'var(--gold)', icon: '📋' },
+    { label: 'Pendientes',    value: stats.pendientes, color: '#C9A96E', icon: '⏳' },
+    { label: 'Confirmadas',   value: stats.confirmadas, color: '#8FBF6A', icon: '✅' },
+    { label: 'Completadas',   value: stats.completadas, color: '#7A9ADF', icon: '🎯' },
+    { label: 'Canceladas',    value: stats.canceladas, color: '#D4654A', icon: '✕' },
+    { label: 'Personas hoy',  value: stats.personas, color: '#C9A96E', icon: '👥' },
+  ];
 
   return (
     <main className="container">
@@ -83,6 +104,17 @@ export default function Dashboard() {
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
+
+      {/* KPIs reales */}
+      <div className="reports-grid" style={{ marginBottom: '2rem' }}>
+        {KPI_CARDS.map((k) => (
+          <div className="report-kpi-card" key={k.label}>
+            <span className="report-kpi-icon">{k.icon}</span>
+            <span className="report-kpi-value" style={{ color: k.color }}>{k.value}</span>
+            <span className="report-kpi-label">{k.label}</span>
+          </div>
+        ))}
+      </div>
 
       {loading ? (
         <div className="loading">Cargando reservaciones...</div>
