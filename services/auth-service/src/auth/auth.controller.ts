@@ -47,4 +47,12 @@ export class AuthController {
   getProfile(@Request() req) {
     return this.authService.getProfile(req.user.sub);
   }
+
+  @Get('verify')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Validar token y devolver identidad (usado por otros servicios)' })
+  verify(@Request() req) {
+    return req.user;
+  }
 }
