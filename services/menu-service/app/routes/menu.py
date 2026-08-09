@@ -1,10 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
+from bson import ObjectId
+from bson.errors import InvalidId
 from ..database import menu_collection
 from ..schemas.menu import MenuItemCreate, MenuItemUpdate, serialize_menu_item
 from ..security import require_admin
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
+
+
+def _oid(item_id: str) -> ObjectId:
+    try:
+        return ObjectId(item_id)
+    except InvalidId:
+        raise HTTPException(status_code=404, detail="Platillo no encontrado")
 
 
 @router.get("/", summary="Listar todos los platillos (HU-02)")
@@ -32,7 +41,7 @@ async def list_menu(
 
 @router.get("/{item_id}", summary="Obtener platillo por ID")
 async def get_menu_item(item_id: str):
-    item = await menu_collection.find_one({"_id": item_id})
+    item = await menu_collection.find_one({"_id": _oid(item_id)})
     if not item:
         raise HTTPException(status_code=404, detail="Platillo no encontrado")
     return serialize_menu_item(item)
@@ -52,17 +61,17 @@ async def update_menu_item(item_id: str, dto: MenuItemUpdate, _: dict = Depends(
     if not update_data:
         raise HTTPException(status_code=400, detail="Sin datos para actualizar")
 
-    result = await menu_collection.update_one({"_id": item_id}, {"$set": update_data})
+    result = await menu_collection.update_one({"_id": _oid(item_id)}, {"$set": update_data})
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Platillo no encontrado")
 
-    updated = await menu_collection.find_one({"_id": item_id})
+    updated = await menu_collection.find_one({"_id": _oid(item_id)})
     return serialize_menu_item(updated)
 
 
 @router.delete("/{item_id}", summary="Eliminar platillo (Admin)")
 async def delete_menu_item(item_id: str, _: dict = Depends(require_admin)):
-    result = await menu_collection.delete_one({"_id": item_id})
+    result = await menu_collection.delete_one({"_id": _oid(item_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Platillo no encontrado")
     return {"message": "Platillo eliminado exitosamente"}
