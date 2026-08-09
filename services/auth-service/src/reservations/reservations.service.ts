@@ -4,6 +4,7 @@ import {
   NotFoundException,
   ForbiddenException,
   Logger,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,7 +15,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationsService implements OnModuleInit {
   private readonly logger = new Logger(ReservationsService.name);
 
   constructor(
@@ -26,6 +27,43 @@ export class ReservationsService {
     private readonly estadosRepo: Repository<EstadoReservacion>,
     private readonly notificationsService: NotificationsService,
   ) {}
+
+  async onModuleInit() {
+    await this.seedCatalogs();
+  }
+
+  private async seedCatalogs() {
+    const estadosCount = await this.estadosRepo.count();
+    if (estadosCount === 0) {
+      await this.estadosRepo.save([
+        this.estadosRepo.create({ nombre: 'Pendiente' }),
+        this.estadosRepo.create({ nombre: 'Confirmada' }),
+        this.estadosRepo.create({ nombre: 'Cancelada' }),
+        this.estadosRepo.create({ nombre: 'Completada' }),
+      ]);
+      this.logger.log('Estados de reservación sembrados');
+    }
+
+    const mesasCount = await this.mesasRepo.count();
+    if (mesasCount === 0) {
+      const seedMesas = [
+        { numero: 1, capacidad: 2, ubicacion: 'Terraza' },
+        { numero: 2, capacidad: 2, ubicacion: 'Terraza' },
+        { numero: 3, capacidad: 4, ubicacion: 'Terraza' },
+        { numero: 4, capacidad: 4, ubicacion: 'Interior' },
+        { numero: 5, capacidad: 4, ubicacion: 'Interior' },
+        { numero: 6, capacidad: 4, ubicacion: 'Interior' },
+        { numero: 7, capacidad: 6, ubicacion: 'Barra' },
+        { numero: 8, capacidad: 6, ubicacion: 'Barra' },
+        { numero: 9, capacidad: 6, ubicacion: 'Barra' },
+        { numero: 10, capacidad: 8, ubicacion: 'VIP' },
+        { numero: 11, capacidad: 8, ubicacion: 'VIP' },
+        { numero: 12, capacidad: 8, ubicacion: 'VIP' },
+      ];
+      await this.mesasRepo.save(seedMesas.map((m) => this.mesasRepo.create(m)));
+      this.logger.log('Mesas sembradas (12)');
+    }
+  }
 
   async create(dto: CreateReservationDto, userId?: number) {
     const disponible = await this.findAvailableTable(
