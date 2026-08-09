@@ -135,7 +135,6 @@ export default function MyReservations() {
               <div className="reservation-card" key={r.id_reservacion} style={{ animation: 'fadeInUp 0.4s ease both' }}>
                 <div className="reservation-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <span className="reservation-id">#{r.id_reservacion}</span>
                     <span
                       className="reservation-status"
                       style={{ background: s.bg, borderColor: s.border, color: s.text }}

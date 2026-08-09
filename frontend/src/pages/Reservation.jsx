@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createReservation } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const WHATSAPP_NUMBER = '527711509246';
 
 export default function Reservation() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     cliente_nombre: '',
     cliente_telefono: '',
@@ -34,10 +38,13 @@ export default function Reservation() {
       if (endH >= 24) { endH = 23; endM = 59; }
       const data = {
         ...form,
+        num_personas: Number(form.num_personas),
+        cliente_email: form.cliente_email?.trim() || undefined,
+        notas: form.notas?.trim() || undefined,
         hora_fin: `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`,
       };
       const result = await createReservation(data);
-      setSuccess(result);
+      setSuccess({ ...result, cliente_telefono: form.cliente_telefono, cliente_nombre: form.cliente_nombre });
       setForm({
         cliente_nombre: '',
         cliente_telefono: '',
@@ -59,26 +66,78 @@ export default function Reservation() {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
+  function sendConfirmationWhatsApp() {
+    if (!success) return;
+    const digits = (success.cliente_telefono || '').replace(/\D/g, '');
+    const waNum =
+      digits.length === 10 ? `52${digits}` : digits;
+    const msg = `Xiú · Alta Cocina Mexicana\n\n✅ Confirmación de reservación\n\nFecha: ${success.fecha}\nHora: ${success.hora_inicio}\nMesa: ${success.mesa_asignada}\nPersonas: ${success.num_personas}\n\n¡Te esperamos!`;
+    window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
   const today = new Date().toISOString().split('T')[0];
 
   if (success) {
+    let fechaFmt = success.fecha;
+    try {
+      fechaFmt = new Date(`${success.fecha}T12:00:00`).toLocaleDateString('es-MX', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    } catch { /* mantiene el formato original */ }
+
+    const rows = [
+      ['A nombre de', success.cliente_nombre || '—'],
+      ['Fecha', fechaFmt],
+      ['Hora', success.hora_inicio],
+      ['Mesa', success.ubicacion ? `Mesa ${success.mesa_asignada} · ${success.ubicacion}` : `Mesa ${success.mesa_asignada}`],
+      ['Personas', success.num_personas],
+    ];
+
     return (
       <div className="page-center">
         <div className="card form-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--gold)' }}>✓</div>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 300, marginBottom: '0.5rem' }}>
+          <div style={{
+            width: '72px', height: '72px', margin: '0 auto 1.2rem', borderRadius: '50%',
+            border: '1px solid var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <span style={{ fontSize: '1.9rem', color: 'var(--gold)' }}>✓</span>
+          </div>
+          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.9rem', fontWeight: 300, marginBottom: '0.4rem' }}>
             Reservación Registrada
           </h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            Tu mesa {success.mesa_asignada} quedó reservada para el {success.fecha} a las {success.hora_inicio}.
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.8rem', fontSize: '0.9rem' }}>
+            Gracias por elegir Xiú. Este es tu comprobante.
           </p>
-          <div style={{ background: 'var(--bg-surface)', borderRadius: 'var(--radius)', padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid var(--border)' }}>
-            <p style={{ fontSize: '0.75rem', color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reservación #{success.id_reservacion}</p>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Mesa {success.mesa_asignada} · {success.num_personas} personas</p>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>{success.mensaje}</p>
+
+          <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '1.4rem 1.6rem', marginBottom: '1.2rem', textAlign: 'left' }}>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: '0.9rem', paddingBottom: '0.7rem', borderBottom: '1px solid var(--border)' }}>
+              Comprobante de reservación
+            </p>
+            {rows.map(([label, value]) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px dashed rgba(255,255,255,0.08)' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>{label}</span>
+                <span style={{ color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: 500, textTransform: 'capitalize' }}>{value}</span>
+              </div>
+            ))}
           </div>
-          <button className="btn btn-primary" onClick={() => setSuccess(null)} style={{ width: '100%' }}>
-            Nueva Reservación
+
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '1.5rem' }}>
+            Al llegar, presenta tu nombre y teléfono para confirmar tu mesa.
+          </p>
+
+          <button className="btn btn-outline" onClick={sendConfirmationWhatsApp} style={{ width: '100%', borderColor: '#25D366', color: '#25D366', marginBottom: '0.6rem' }}>
+            Enviarme la confirmación por WhatsApp
+          </button>
+          {isAuthenticated && (
+            <button className="btn btn-outline" onClick={() => navigate('/my-reservations')} style={{ width: '100%', marginBottom: '0.6rem' }}>
+              Ver mis reservaciones
+            </button>
+          )}
+          <button className="btn btn-gold btn-full" onClick={() => setSuccess(null)}>
+            Hacer otra reservación
           </button>
         </div>
       </div>
@@ -157,4 +216,3 @@ export default function Reservation() {
     </div>
   );
 }
-

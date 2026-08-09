@@ -6,6 +6,7 @@ import {
   Min,
   Max,
   Matches,
+  ValidateIf,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -19,7 +20,7 @@ export class CreateReservationDto {
   cliente_telefono: string;
 
   @ApiPropertyOptional({ example: 'juan@email.com' })
-  @IsOptional()
+  @ValidateIf((o) => o.cliente_email !== '' && o.cliente_email != null)
   @IsEmail()
   cliente_email?: string;
 

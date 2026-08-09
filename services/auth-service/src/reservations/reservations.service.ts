@@ -100,10 +100,10 @@ export class ReservationsService implements OnModuleInit {
       hora_inicio: dto.hora_inicio,
       hora_fin: dto.hora_fin,
       num_personas: dto.num_personas,
-      notas: dto.notas,
+      notas: dto.notas?.trim() || undefined,
       cliente_nombre: dto.cliente_nombre,
       cliente_telefono: dto.cliente_telefono,
-      cliente_email: dto.cliente_email,
+      cliente_email: dto.cliente_email?.trim() || undefined,
     });
 
     const saved = await this.reservationsRepo.save(reservation);
