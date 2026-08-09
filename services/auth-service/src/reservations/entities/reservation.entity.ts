@@ -14,7 +14,7 @@ export class Reservation {
   @PrimaryGeneratedColumn()
   id_reservacion: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   id_usuario: number | null;
 
   @Column()
