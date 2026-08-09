@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
 from ..database import menu_collection
 from ..schemas.menu import MenuItemCreate, MenuItemUpdate, serialize_menu_item
+from ..security import require_admin
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
@@ -38,7 +39,7 @@ async def get_menu_item(item_id: str):
 
 
 @router.post("/", status_code=201, summary="Crear platillo (Admin)")
-async def create_menu_item(dto: MenuItemCreate):
+async def create_menu_item(dto: MenuItemCreate, _: dict = Depends(require_admin)):
     doc = dto.model_dump()
     result = await menu_collection.insert_one(doc)
     created = await menu_collection.find_one({"_id": result.inserted_id})
@@ -46,7 +47,7 @@ async def create_menu_item(dto: MenuItemCreate):
 
 
 @router.put("/{item_id}", summary="Actualizar platillo (Admin)")
-async def update_menu_item(item_id: str, dto: MenuItemUpdate):
+async def update_menu_item(item_id: str, dto: MenuItemUpdate, _: dict = Depends(require_admin)):
     update_data = {k: v for k, v in dto.model_dump().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="Sin datos para actualizar")
@@ -60,7 +61,7 @@ async def update_menu_item(item_id: str, dto: MenuItemUpdate):
 
 
 @router.delete("/{item_id}", summary="Eliminar platillo (Admin)")
-async def delete_menu_item(item_id: str):
+async def delete_menu_item(item_id: str, _: dict = Depends(require_admin)):
     result = await menu_collection.delete_one({"_id": item_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Platillo no encontrado")
