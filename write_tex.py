@@ -533,54 +533,37 @@ En esta sección se integran las 16 capturas de pantalla organizadas por el rol 
 \end{figure}
 
 % ════════════════════════════════════════════════════════════════════════════
-\section{Plan de Pruebas y Resultados de Verificación IEEE 829}
-% ════════════════════════════════════════════════════════════════════════════
-De acuerdo con el estándar \textbf{IEEE 829}, se ejecutó una suite completa de pruebas unitarias y de integración end-to-end (E2E) para verificar el 100\% de la operabilidad de la plataforma.
+\section{Arquitectura de Seguridad, Autenticación JWT y Protección CORS}
 
-\begin{table}[H]\small\centering
-\caption{Matriz de Pruebas de Integración y E2E Formato IEEE 829 (10/10 PASADAS)}
-\begin{tabular}{|c|p{4.5cm}|p{5cm}|c|c|}
-\hline
-\textbf{ID} & \textbf{Caso de Prueba} & \textbf{Resultado Esperado} & \textbf{HTTP} & \textbf{Estado} \\ \hline
-PR-01 & Carga de Frontend React SPA & HTTP 200 en dominio Vercel & 200 OK & \textbf{PASÓ} \\ \hline
-PR-02 & Autenticación Admin JWT & Retorna Token JWT firmado & 201 OK & \textbf{PASÓ} \\ \hline
-PR-03 & Autenticación Mesero JWT & Retorna Token JWT con rol mesero & 201 OK & \textbf{PASÓ} \\ \hline
-PR-04 & Consulta Menú MongoDB & Devuelve array de platillos NoSQL & 200 OK & \textbf{PASÓ} \\ \hline
-PR-05 & Consulta Mesas Disponibles & Retorna mesas libres para horario & 200 OK & \textbf{PASÓ} \\ \hline
-PR-06 & Inserción de Reservación & Registro creado con ID único & 201 OK & \textbf{PASÓ} \\ \hline
-PR-07 & Cambio de Estado Reservación & Estado actualizado a \texttt{confirmada} & 200 OK & \textbf{PASÓ} \\ \hline
-PR-08 & Lista de Reservas (Admin) & Devuelve todas las reservas de la BD & 200 OK & \textbf{PASÓ} \\ \hline
-PR-09 & Reservas de Hoy (Tableboard) & Filtra reservaciones del día actual & 200 OK & \textbf{PASÓ} \\ \hline
-PR-10 & Control de Acceso Sin JWT & Rechaza acceso no autorizado (401) & 401 Unauthorized & \textbf{PASÓ} \\ \hline
-\end{tabular}
-\end{table}
+La seguridad en la arquitectura SOA de \textbf{Xiú} se implementó mediante un esquema sin estado (stateless) basado en \textbf{JSON Web Tokens (JWT)} y encriptación de credenciales con \textbf{Bcrypt}.
 
-% ════════════════════════════════════════════════════════════════════════════
-\section{Publicación en Sitios Distribuidos y Repositorio GitHub}
-% ════════════════════════════════════════════════════════════════════════════
+\subsection{Flujo de Firma y Autenticación Criptográfica}
+1. \textbf{Hash de Contraseñas:} Las contraseñas de los usuarios (\texttt{admin@xiu.mx} y \texttt{mesero@xiu.mx}) se almacenan en MySQL procesadas con el algoritmo \texttt{bcrypt} utilizando una sal dinámica de 10 rondas.
+2. \textbf{Firma Digital HS256:} Al validar las credenciales en \texttt{POST /api/auth/login}, el servicio \texttt{JwtService} de NestJS genera un token firmado con una clave secreta privada (\texttt{JWT\_SECRET}), emitiendo claims que incluyen el ID, correo y rol del usuario (\texttt{admin} o \texttt{mesero}).
+3. \textbf{Cabecera Authorization Bearer:} El cliente React incluye el token en cada petición protegida utilizando el estándar \texttt{Authorization: Bearer <token>}.
 
-\subsection{Publicación en la Nube (Despliegue SOA en 3 Sitios Independientes)}
-Cumpliendo el requisito de publicación distribuida, cada componente se encuentra activo en plataformas de nube independientes:
-
-\begin{center}\small
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Componente} & \textbf{Plataforma Cloud} & \textbf{URL Oficial de Producción} \\ \hline
-Frontend SPA & Vercel & \url{https://restaurante-frontend-omega.vercel.app/} \\ \hline
-Auth Service (NestJS) & Railway & \url{https://restaurante-production-36c3.up.railway.app/api} \\ \hline
-Menu Service (FastAPI) & Render & \url{https://menu-service-u8l0.onrender.com/api} \\ \hline
-Tablero de Control & Trello & \url{https://trello.com/b/zHsZvXgU/proyecto-final-aos} \\ \hline
-\end{tabular}
-\end{center}
-
-\subsection{Demostración de Participación y Colaboración en GitHub}
-El desarrollo colaborativo entre Cristopher López Suárez y Jovanny Hernández Hernández se gestionó a través del repositorio oficial en GitHub:
+\subsection{Protección Interceptora con Guards y Polimorfismo de CORS}
+Para evitar vulnerabilidades de origen cruzado y accesos no autorizados:
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Repositorio Oficial:} \url{https://github.com/Crisls24/Restaurante-.git}
-  \item \textbf{Evidencia de Participación:} Múltiples commits sincronizados en la rama principal, abarcando backend controllers, componentes de interfaz y middlewares de seguridad.
+  \item \textbf{NestJS JwtAuthGuard:} Intercepta las solicitudes antes de ejecutar los controladores de reservaciones. Si el token expira o es alterado, el servidor rechaza automáticamente con un código \texttt{401 Unauthorized}.
+  \item \textbf{Configuración CORS Estricta:} Ambos microservicios (\textbf{NestJS} y \textbf{FastAPI}) configuran reglas de origen permitiendo exclusivamente las peticiones provenientes del dominio oficial del frontend en Vercel (\texttt{https://restaurante-frontend-omega.vercel.app}).
 \end{itemize}
 
 % ════════════════════════════════════════════════════════════════════════════
+\section{Infraestructura de Despliegue Cloud y Gestión de Tolerancia a Fallos}
+
+El despliegue distribuido de la plataforma se diseñó aprovechando el modelo de PaaS (Platform as a Service) para cada uno de los componentes de la arquitectura SOA:
+
+\subsection{Topología de Despliegue en 3 Sitios Cloud}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Capa de Presentación (Vercel):} Hospeda la Single Page Application (SPA) construida en React 18, garantizando distribución mediante red CDN global con tiempos de respuesta sub-100ms.
+  \item \textbf{Capa de Negocio y Auth (Railway):} Hospeda el contenedor de NestJS conectado a la base de datos relacional MySQL Cloud, gestionando conexiones continuas y transacciones ACID.
+  \item \textbf{Capa de Menú y Productos (Render + MongoDB Atlas):} Hospeda el microservicio FastAPI en Python 3.11 conectado a un cluster distribuido de MongoDB Atlas en la nube.
+\end{itemize}
+
+\subsection{Manejo de Resiliencia y Arranque en Frío (Cold Start)}
+En el entorno de producción de Render (plan gratuito), el contenedor del microservicio de menú entra en estado de suspensión tras 15 minutos de inactividad. La arquitectura cliente absorbe esta condición mediante un spinner de carga y reintentos asíncronos con tiempo de espera extendido (60 segundos), garantizando que el usuario obtenga sus datos de manera transparente una vez que el contenedor NoSQL completa su arranque en frío.
+
 \section{Manual Operativo de Usuario por Rol}
 % ════════════════════════════════════════════════════════════════════════════
 
