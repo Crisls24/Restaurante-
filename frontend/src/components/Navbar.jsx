@@ -51,6 +51,7 @@ export default function Navbar() {
         {/* Cliente autenticado */}
         {isCliente && (
           <>
+            <Link to="/reservation" className="btn-nav">Reservar</Link>
             <Link to="/my-reservations" className="nav-link">Mis Reservas</Link>
             <Link to="/profile"         className="nav-link">Perfil</Link>
             <button className="btn-logout" onClick={handleLogout}>Salir</button>

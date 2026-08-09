@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createReservation } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 const WHATSAPP_NUMBER = '527711509246';
 
 export default function Reservation() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     cliente_nombre: '',
@@ -20,6 +20,17 @@ export default function Reservation() {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setForm((f) => ({
+        ...f,
+        cliente_nombre: f.cliente_nombre || user.nombre || '',
+        cliente_email: f.cliente_email || user.email || '',
+        cliente_telefono: f.cliente_telefono || user.telefono || '',
+      }));
+    }
+  }, [user]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
