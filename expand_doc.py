@@ -1,4 +1,6 @@
-\documentclass[12pt,a4paper]{article}
+import os, subprocess
+
+content = r"""\documentclass[12pt,a4paper]{article}
 
 % ── Codificación y lenguaje ──────────────────────────────────────────────────
 \usepackage[utf8]{inputenc}
@@ -659,3 +661,12 @@ La integración de un frontend responsivo en \textbf{React 18} con dos microserv
 El apego estricto a las especificaciones \textbf{IEEE 830} y \textbf{IEEE 829}, junto con la gestión del proyecto mediante \textbf{Scrum}, \textbf{Trello} y \textbf{GitHub}, respalda el cumplimiento integral de los estándares académicos y profesionales requeridos.
 
 \end{document}
+"""
+
+with open('documentacion_final.tex', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+with open('write_tex.py', 'w', encoding='utf-8') as f:
+    f.write(f'import os\ncontent = r"""{content}"""\nwith open("documentacion_final.tex", "w", encoding="utf-8") as f:\n    f.write(content)\nprint("File written successfully!")\n')
+
+print("Generating TeX file...")
