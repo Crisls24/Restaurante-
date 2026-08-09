@@ -131,7 +131,7 @@ export class ReservationsService implements OnModuleInit {
       num_personas: saved.num_personas,
       estado: 'Pendiente',
       mensaje:
-        'Reservación creada exitosamente. Recibirás confirmación por WhatsApp.',
+        'Reservación registrada. Te esperamos en Xiú; al llegar indica tu nombre y el número de mesa.',
     };
   }
 

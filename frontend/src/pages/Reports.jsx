@@ -11,7 +11,12 @@ function calcStats(reservations) {
   const completadas  = reservations.filter((r) => getEstado(r) === 'Completada').length;
   const pendientes   = reservations.filter((r) => getEstado(r) === 'Pendiente').length;
   const tasa         = total > 0 ? Math.round(((confirmadas + completadas) / total) * 100) : 0;
-  const ingresos     = reservations.reduce((acc, r) => acc + (r.num_personas || 2) * 350, 0);
+
+  // Métricas reales: solo reservaciones completadas (asistencia efectiva)
+  const completadasRes = reservations.filter((r) => getEstado(r) === 'Completada');
+  const atendidas      = completadasRes.reduce((acc, r) => acc + (r.num_personas || 2), 0);
+  const TICKET_PROMEDIO = 350;
+  const ingresos = completadasRes.reduce((acc, r) => acc + (r.num_personas || 2) * TICKET_PROMEDIO, 0);
 
   // Agrupación por fecha
   const byDate = reservations.reduce((acc, r) => {
@@ -27,7 +32,7 @@ function calcStats(reservations) {
   const mañana  = reservations.filter((r) => r.hora_inicio < '16:00').length;
   const noche   = reservations.filter((r) => r.hora_inicio >= '19:00').length;
 
-  return { total, confirmadas, canceladas, completadas, pendientes, tasa, ingresos, topDates, mañana, noche };
+  return { total, confirmadas, canceladas, completadas, pendientes, tasa, atendidas, ingresos, topDates, mañana, noche };
 }
 
 const STATUS_COLORS = {
@@ -81,10 +86,11 @@ export default function Reports() {
   const STAT_CARDS = [
     { label: 'Total reservaciones', value: stats.total, color: 'var(--gold)', icon: '📋' },
     { label: 'Confirmadas',         value: stats.confirmadas, color: '#8FBF6A', icon: '✅' },
-    { label: 'Canceladas',          value: stats.canceladas,  color: '#D4654A', icon: '✕' },
     { label: 'Completadas',         value: stats.completadas, color: '#7A9ADF', icon: '🎯' },
+    { label: 'Canceladas',          value: stats.canceladas,  color: '#D4654A', icon: '✕' },
     { label: 'Tasa de éxito',       value: `${stats.tasa}%`, color: 'var(--gold-bright)', icon: '📈' },
-    { label: 'Ingreso est.',        value: `$${stats.ingresos.toLocaleString()}`, color: '#C9A96E', icon: '💰' },
+    { label: 'Personas atendidas',  value: stats.atendidas, color: '#8FBF6A', icon: '👥' },
+    { label: 'Ingreso est.*',       value: `$${stats.ingresos.toLocaleString()}`, color: '#C9A96E', icon: '💰' },
   ];
 
   return (
@@ -119,6 +125,9 @@ export default function Reports() {
               </div>
             ))}
           </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginTop: '0.4rem' }}>
+            * Ingreso estimado = reservaciones completadas × ticket promedio de $350 por comensal. El sistema aún no registra consumos individuales.
+          </p>
 
           {/* Distribución por estado — barra visual */}
           <div className="card" style={{ padding: '1.5rem 2rem', marginBottom: '2rem' }}>

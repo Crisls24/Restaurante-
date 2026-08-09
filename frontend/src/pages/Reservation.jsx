@@ -66,10 +66,10 @@ export default function Reservation() {
         <div className="card form-card" style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--gold)' }}>✓</div>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 300, marginBottom: '0.5rem' }}>
-            Reservación Confirmada
+            Reservación Registrada
           </h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-            Tu mesa {success.mesa_asignada} está reservada para el {success.fecha} a las {success.hora_inicio}.
+            Tu mesa {success.mesa_asignada} quedó reservada para el {success.fecha} a las {success.hora_inicio}.
           </p>
           <div style={{ background: 'var(--bg-surface)', borderRadius: 'var(--radius)', padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid var(--border)' }}>
             <p style={{ fontSize: '0.75rem', color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reservación #{success.id_reservacion}</p>
@@ -90,7 +90,7 @@ export default function Reservation() {
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 300, textAlign: 'center', marginBottom: '0.3rem' }}>
           Reservar Mesa
         </h2>
-        <p className="subtitle">Elige tu fecha y hora. Confirmación al instante.</p>
+        <p className="subtitle">Elige tu fecha y hora. Tu reservación queda registrada al instante.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-row">
