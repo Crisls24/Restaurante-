@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createReservation } from '../services/api';
 
-const WHATSAPP_NUMBER = '525512345678';
+const WHATSAPP_NUMBER = '527711509246';
 
 export default function Reservation() {
   const [form, setForm] = useState({
@@ -168,3 +168,4 @@ export default function Reservation() {
     </div>
   );
 }
+

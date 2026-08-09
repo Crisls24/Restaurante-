@@ -37,7 +37,7 @@
 - Imports orden: React → hooks → librerías → components → context → services → assets
 - Siempre manejar loading states + error states en fetchs
 - fetchWithTimeout para APIs con cold start (Render)
-- WhatsApp link en reservaciones: `https://wa.me/5255123456789?text=...`
+- WhatsApp link en reservaciones: `https://wa.me/527711509246?text=...`
 
 ## Responsive
 - Mobile-first, breakpoints: 1024px, 768px, 480px

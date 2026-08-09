@@ -69,7 +69,7 @@ export async function getMenu(categoria = null) {
 export async function createReservation(data) {
   const res = await fetch(`${AUTH_API}/reservations`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   const json = await res.json();

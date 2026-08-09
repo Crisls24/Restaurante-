@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { getReservations, cancelReservation } from '../services/api';
+import { getUserReservations, cancelReservation } from '../services/api';
 
 const STATUS_COLORS = {
   Pendiente:  { bg: '#2A2218', border: '#C9A96E', text: '#C9A96E' },
@@ -30,7 +30,7 @@ export default function MyReservations() {
     setLoading(true);
     setError('');
     try {
-      const data = await getReservations();
+      const data = await getUserReservations();
       setReservations(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
