@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/co
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../users/user.entity';
 import { RegisterDto } from './dto/register.dto';
@@ -14,6 +15,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -77,11 +79,16 @@ export class AuthService {
   }
 
   async seedAdmin() {
-    const adminEmail = 'admin@xiu.mx';
+    const adminEmail = this.configService.get<string>('SEED_ADMIN_EMAIL', '');
+    const adminPassword = this.configService.get<string>('SEED_ADMIN_PASSWORD', '');
+    if (!adminEmail || !adminPassword) {
+      return null;
+    }
+
     const exists = await this.usersRepo.findOne({ where: { email: adminEmail } });
     if (exists) return null;
 
-    const hash = await bcrypt.hash('admin123', 10);
+    const hash = await bcrypt.hash(adminPassword, 10);
     const admin = this.usersRepo.create({
       nombre: 'Admin',
       apellido: 'Xiú',
